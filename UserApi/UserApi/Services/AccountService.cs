@@ -1,10 +1,13 @@
-﻿using UserApi.Model;
+﻿using Microsoft.EntityFrameworkCore;
+using ServiceCommons;
+using UserApi.Model;
+using UserApi.Repository;
 
 namespace UserApi.Services;
 
 public interface IAccountService
 {
-    Task<Account> CreateDefaultAccountForUserAsync(
+    Task<Result<Account>> CreateDefaultAccountForUserAsync(
         User user,
         CancellationToken cancellationToken);
     
@@ -13,15 +16,41 @@ public interface IAccountService
         CancellationToken cancellationToken);
 }
 
-public class AccountService : IAccountService
+public class AccountService(UserDbContext db) : IAccountService
 {
-    public Task<Account> CreateDefaultAccountForUserAsync(User user, CancellationToken cancellationToken)
+    public async Task<Result<Account>> CreateDefaultAccountForUserAsync(User user, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var existingAccount = await GetByUserIdAsync(user.Id, cancellationToken);
+
+        if (existingAccount is not null)
+        {
+            return Result<Account>.Failure("Account already exists");
+        }
+
+        var account = new Account()
+        {
+            UserId = user.Id,
+            AccountNumber = GenerateAccountNumber(),
+            AccountType = "checking",
+            Status = "active",
+            CreatedAt = DateTime.UtcNow,
+        };
+        
+        db.Accounts.Add(account);
+        await db.SaveChangesAsync(cancellationToken);
+
+        return Result<Account>.Success(account);
+    }
+
+    private static string GenerateAccountNumber()
+    {
+        return Random.Shared.Next(10000000, 99999999).ToString();
     }
 
     public Task<Account?> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return db.Accounts
+            .AsNoTracking()
+            .FirstOrDefaultAsync(a => a.UserId == userId, cancellationToken);
     }
 }

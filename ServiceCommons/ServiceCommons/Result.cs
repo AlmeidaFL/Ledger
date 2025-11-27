@@ -4,28 +4,30 @@ public class Result
 {
     public bool IsSuccess { get; }
     public bool IsFailure => !IsSuccess;
+    public ErrorType? ErrorType { get; }
 
     public string? Error { get; }
 
-    protected Result(bool isSuccess, string? error)
+    protected Result(bool isSuccess, string? error, ErrorType? errorType = null)
     {
         IsSuccess = isSuccess;
         Error = error;
+        ErrorType = errorType;
     }
 
     public static Result Success()
         => new Result(true, null);
 
-    public static Result Failure(string error)
-        => new Result(false, error);
+    public static Result Failure(string error, ErrorType? errorType = null)
+        => new Result(false, error, errorType);
 }
 
 public class Result<T> : Result
 {
     public T? Value { get; }
 
-    private Result(bool isSuccess, T? value, string? error)
-        : base(isSuccess, error)
+    private Result(bool isSuccess, T? value, string? error, ErrorType? errorType = null)
+        : base(isSuccess, error, errorType)
     {
         Value = value;
     }
@@ -33,6 +35,13 @@ public class Result<T> : Result
     public static Result<T> Success(T value)
         => new Result<T>(true, value, null);
 
-    public static Result<T> Failure(string error)
-        => new Result<T>(false, default, error);
+    public new static Result<T> Failure(string error, ErrorType? errorType = null)
+        => new Result<T>(false, default, error, errorType);
 }
+
+public enum ErrorType
+{
+    Forbidden,
+    NotFound,
+    Conflict
+} 
