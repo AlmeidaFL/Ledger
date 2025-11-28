@@ -72,8 +72,15 @@ public class UserService(
                 return Result<UserResponse>.Failure(result.Error!);
             }
 
-            var userCreatedEvent = new UserCreatedEvent(user.Id, user.Email, user.FullName);
-            var message = OutboxMessage.FromEvent(userCreatedEvent);
+            var userCreatedEvent = new UserCreatedEvent
+            {
+                Id = user.Id.ToString(),
+                Email = user.Email,
+                FullName = user.FullName,
+            };
+            var message = OutboxMessage.FromEvent(
+                message: userCreatedEvent,
+                "user-created");
             db.OutboxMessages.Add(message);
 
             await db.SaveChangesAsync(cancellationToken);
