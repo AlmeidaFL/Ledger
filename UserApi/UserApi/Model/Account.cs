@@ -9,10 +9,17 @@ public class Account
     
     public string AccountNumber { get; set; }
     public string AccountType { get; set; }
-    public string Status { get; set; }
+    public AccountStatus Status { get; set; }
     
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     
     public byte[] RowVersion { get; set; }
+}
+
+public enum AccountStatus
+{
+    Pending,
+    Active,
+    Disabled
 }

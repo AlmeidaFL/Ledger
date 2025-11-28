@@ -12,7 +12,7 @@ public class AccountConverter
             UserId = account.UserId,
             AccountNumber = account.AccountNumber,
             AccountType = account.AccountType,
-            Status = account.Status,
+            Status = account.Status.ToString(),
             CreatedAt = account.CreatedAt,
             UpdatedAt = account.UpdatedAt
         }; 

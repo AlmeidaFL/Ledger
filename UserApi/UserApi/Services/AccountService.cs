@@ -32,12 +32,19 @@ public class AccountService(UserDbContext db) : IAccountService
             UserId = user.Id,
             AccountNumber = GenerateAccountNumber(),
             AccountType = "checking",
-            Status = "active",
+            Status = AccountStatus.Pending,
             CreatedAt = DateTime.UtcNow,
         };
-        
-        db.Accounts.Add(account);
-        await db.SaveChangesAsync(cancellationToken);
+
+        try
+        {
+            db.Accounts.Add(account);
+            await db.SaveChangesAsync(cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            return Result<Account>.Failure(ex.Message);
+        }
 
         return Result<Account>.Success(account);
     }
