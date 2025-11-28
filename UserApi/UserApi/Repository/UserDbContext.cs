@@ -9,10 +9,12 @@ public class UserDbContext(DbContextOptions<UserDbContext> options)
 {
     public DbSet<User> Users => Set<User>();
     public DbSet<Account> Accounts => Set<Account>();
+    public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new UserConfiguration());
         modelBuilder.ApplyConfiguration(new AccountConfiguration());
+        modelBuilder.ApplyConfiguration(new OutboxMessageConfiguration());
     }
 }

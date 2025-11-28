@@ -5,6 +5,7 @@ using UserApi.Converters;
 using UserApi.Dtos;
 using UserApi.Model;
 using UserApi.Repository;
+using UserApi.Services.Events;
 using UserApi.Services.Exceptions;
 
 namespace UserApi.Services;
@@ -53,13 +54,40 @@ public class UserService(
             CreatedAt = DateTime.UtcNow,
         };
         
+        return await SaveUser(user, cancellationToken);
+    }
+
+    private async Task<Result<UserResponse>> SaveUser(User user, CancellationToken cancellationToken)
+    {
         await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken);
         
-        db.Users.Add(user);
-        await db.SaveChangesAsync(cancellationToken);
-        await accountService.CreateDefaultAccountForUserAsync(user, cancellationToken);
-        
-        await transaction.CommitAsync(cancellationToken);
+        try
+        {
+            db.Users.Add(user);
+
+            var result = await accountService.CreateDefaultAccountForUserAsync(user, cancellationToken);
+            if (result.IsFailure)
+            {
+                await transaction.RollbackAsync(cancellationToken);
+                return Result<UserResponse>.Failure(result.Error!);
+            }
+
+            var userCreatedEvent = new UserCreatedEvent(user.Id, user.Email, user.FullName);
+            var message = OutboxMessage.FromEvent(userCreatedEvent);
+            db.OutboxMessages.Add(message);
+
+            await db.SaveChangesAsync(cancellationToken);
+
+            await transaction.CommitAsync(cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync(cancellationToken);
+
+            return Result<UserResponse>.Failure(
+                "An unexpected error occurred while creating the user.",
+                ErrorType.Unexpected);
+        }
 
         return Result<UserResponse>.Success(UserConverter.ToResponse(user));
     }
