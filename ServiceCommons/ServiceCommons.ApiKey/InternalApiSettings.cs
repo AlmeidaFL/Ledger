@@ -4,8 +4,6 @@ namespace ServiceCommons.ApiKey;
 
 public class InternalApiSettings
 {
-    public const string SectionName = "InternalApi";
-    
     public string ApiKey { get; set; }
     
     private byte[]? cached;
