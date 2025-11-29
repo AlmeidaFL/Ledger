@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceCommons.Jwt", "Servi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceCommons.Grpc", "ServiceCommons.Grpc\ServiceCommons.Grpc.csproj", "{10E65C16-8E3A-4EEA-A61D-C49F7AD05631}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceCommons.ApiKey", "ServiceCommons.ApiKey\ServiceCommons.ApiKey.csproj", "{043F0E81-6438-4DDE-9FEB-33F8AB03C9C5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{10E65C16-8E3A-4EEA-A61D-C49F7AD05631}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{10E65C16-8E3A-4EEA-A61D-C49F7AD05631}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{10E65C16-8E3A-4EEA-A61D-C49F7AD05631}.Release|Any CPU.Build.0 = Release|Any CPU
+		{043F0E81-6438-4DDE-9FEB-33F8AB03C9C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{043F0E81-6438-4DDE-9FEB-33F8AB03C9C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{043F0E81-6438-4DDE-9FEB-33F8AB03C9C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{043F0E81-6438-4DDE-9FEB-33F8AB03C9C5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
