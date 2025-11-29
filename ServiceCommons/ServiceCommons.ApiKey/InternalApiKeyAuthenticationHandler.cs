@@ -30,7 +30,7 @@ public class InternalApiKeyAuthenticationHandler(
         
         var providedApiKey = values.FirstOrDefault();
         if (string.IsNullOrWhiteSpace(providedApiKey)
-            || CryptographicOperations.FixedTimeEquals(Encoding.UTF8.GetBytes(providedApiKey), settings.Value.ApiKeyBytes))
+            || !CryptographicOperations.FixedTimeEquals(Encoding.UTF8.GetBytes(providedApiKey), settings.Value.ApiKeyBytes))
         {
             return Task.FromResult(AuthenticateResult.Fail("Invalid API key"));
         }
