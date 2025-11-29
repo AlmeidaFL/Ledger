@@ -1,0 +1,6 @@
+﻿services:
+  ledgergateway:
+    image: ledgergateway
+    build:
+      context: .
+      dockerfile: LedgerGateway/Dockerfile
