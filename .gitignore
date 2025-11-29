@@ -5,3 +5,5 @@ riderModule.iml
 /_ReSharper.Caches/
 **/.idea/
 **/[Mm]igrations/
+**/launchSettings.json
+*.user
