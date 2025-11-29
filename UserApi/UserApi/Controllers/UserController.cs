@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ServiceCommons;
 using UserApi.Converters;
 using UserApi.Services;
 
 namespace UserApi.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("user")]
 public class UserController(IUserService userService) : ControllerBase

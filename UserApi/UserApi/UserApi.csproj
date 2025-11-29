@@ -25,7 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\ServiceCommons\ServiceCommons.Jwt\ServiceCommons.Jwt.csproj" />
+      <ProjectReference Include="..\..\ServiceCommons\ServiceCommons.ApiKey\ServiceCommons.ApiKey.csproj" />
       <ProjectReference Include="..\..\ServiceCommons\ServiceCommons\ServiceCommons.csproj" />
     </ItemGroup>
 
