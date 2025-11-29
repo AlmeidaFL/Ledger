@@ -9,13 +9,7 @@
     <ItemGroup>
       <PackageReference Include="Grpc.Core" Version="2.46.6" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.3.0" />
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.11" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.0" />
     </ItemGroup>
-
-    <ItemGroup>
-      <Reference Include="Microsoft.Extensions.Options.ConfigurationExtensions">
-        <HintPath>..\..\..\..\..\..\Program Files\dotnet\shared\Microsoft.AspNetCore.App\9.0.6\Microsoft.Extensions.Options.ConfigurationExtensions.dll</HintPath>
-      </Reference>
-    </ItemGroup>
-
 </Project>
