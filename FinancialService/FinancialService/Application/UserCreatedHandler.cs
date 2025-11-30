@@ -35,6 +35,8 @@ public class UserCreatedHandler(
         
         dbContext.Users.Add(user);
         dbContext.Accounts.Add(account);
+        var message = CreateEvent(account, user);
+        dbContext.OutboxMessages.Add(OutboxMessage.FromEvent(message, OutboxMessage.FinancialAccountCreatedTopic));
 
         try
         {
@@ -51,6 +53,17 @@ public class UserCreatedHandler(
         {
             logger.LogError(ex, "Unexpected exception handling user {UserId}", evt.Id);
         }
+    }
+
+    private static FinancialAccountCreatedEvent CreateEvent(Account account, User user)
+    {
+        var message = new FinancialAccountCreatedEvent()
+        {
+            Id = Guid.NewGuid().ToString(),
+            AccountId = account.Id,
+            UserId = user.Id,
+        };
+        return message;
     }
 
     private static bool IsUniqueViolation(DbUpdateException ex)
