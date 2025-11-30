@@ -48,10 +48,8 @@ public class UserCreatedConsumerWorker(
                     continue;
                 }
 
-                using var scope = scopeFactory.CreateScope();
-                var handler = scope.ServiceProvider.GetRequiredService<IUserCreatedHandler>();
-                await handler.HandleAsync(user, stoppingToken);
-                
+                await HandleMessage(user, stoppingToken);
+
                 // consumer.Commit(result);
             }
             catch (ConsumeException ex)
@@ -64,7 +62,7 @@ public class UserCreatedConsumerWorker(
         consumer.Close();
         logger.LogInformation("UserCreatedConsumerWorker shutting down");
     }
-
+    
     private UserCreatedEvent? GetUser(string value)
     {
         UserCreatedEvent? evt = null;
@@ -78,5 +76,12 @@ public class UserCreatedConsumerWorker(
         }
 
         return evt;
+    }
+
+    private async Task HandleMessage(UserCreatedEvent user, CancellationToken stoppingToken = default)
+    {
+        using var scope = scopeFactory.CreateScope();
+        var handler = scope.ServiceProvider.GetRequiredService<IUserCreatedHandler>();
+        await handler.HandleAsync(user, stoppingToken);
     }
 }
