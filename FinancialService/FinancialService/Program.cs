@@ -1,6 +1,15 @@
+using FinancialService.Application;
+using FinancialService.Messaging;
 using FinancialService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<KafkaUserCreatedConsumerSettings>(
+    builder.Configuration.GetSection("Kafka:UserCreatedConsumer"));
+
+builder.Services.AddHostedService<UserCreatedConsumerWorker>();
+builder.Services.AddScoped<IUserCreatedHandler, UserCreatedHandler>();
+
 
 // Add services to the container.
 builder.Services.AddGrpc();
