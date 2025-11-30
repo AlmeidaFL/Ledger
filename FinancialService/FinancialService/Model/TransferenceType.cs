@@ -2,5 +2,7 @@
 
 public enum TransferenceType
 {
-    Simple
+    Deposit,
+    Withdraw,
+    Transfer
 }
