@@ -4,6 +4,11 @@ using UserApi.Services.Events;
 
 namespace UserApi.Model;
 
+public interface IOutboxEvent
+{
+    public string Id { get; set; }
+}
+
 public class OutboxMessage
 {
     public const string UserCreatedTopic = "UserCreated";
@@ -23,7 +28,7 @@ public class OutboxMessage
     public int RetryCount { get; set; }
 
     public static OutboxMessage FromEvent<T>(T message, string topic)
-        where T : OutboxEvent
+        where T : IOutboxEvent
     {
         return new OutboxMessage
         {

@@ -1,6 +1,8 @@
-﻿namespace UserApi.Services.Events;
+﻿using UserApi.Model;
 
-public record UserCreatedEvent : OutboxEvent
+namespace UserApi.Services.Events;
+
+public record UserCreatedEvent : IOutboxEvent
 {
     public string Id { get; set; }
     public string Email { get; set; }
