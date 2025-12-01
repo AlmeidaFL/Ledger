@@ -1,0 +1,21 @@
+{
+  "runtime": "Net80",
+  "defaultVariables": null,
+  "documentGenerator": {
+    "fromDocument": {
+      "json": "../open-api/UserApi.json",  
+      "output": "nswag/user-api.yaml"
+    }
+  },
+  "codeGenerators": {
+    "openApiToCSharpClient": {
+      "className": "UserApiClient",
+      "namespace": "LedgerGateway.RestClients",
+      "output": "RestClients/UserApiClient.g.cs",
+      "useBaseUrl": true,
+      "generateClientInterfaces": false,
+      "injectHttpClient": true,
+      "disposeHttpClient": false
+    }
+  }
+}
