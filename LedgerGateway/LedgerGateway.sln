@@ -9,6 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceCommons", "..\ServiceCommons\ServiceCommons\ServiceCommons.csproj", "{92D37077-D3EF-47C1-8156-9F50D9245998}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceCommons.ApiKey", "..\ServiceCommons\ServiceCommons.ApiKey\ServiceCommons.ApiKey.csproj", "{1A4C4124-88F0-4EE2-98B4-A8CBB4EA2A50}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,5 +33,9 @@ Global
 		{92D37077-D3EF-47C1-8156-9F50D9245998}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92D37077-D3EF-47C1-8156-9F50D9245998}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{92D37077-D3EF-47C1-8156-9F50D9245998}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A4C4124-88F0-4EE2-98B4-A8CBB4EA2A50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A4C4124-88F0-4EE2-98B4-A8CBB4EA2A50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A4C4124-88F0-4EE2-98B4-A8CBB4EA2A50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A4C4124-88F0-4EE2-98B4-A8CBB4EA2A50}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
