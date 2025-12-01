@@ -9,7 +9,7 @@ public interface IOutboxEvent
 
 public class OutboxMessage
 {
-    public const string FinancialAccountCreatedTopic = "FinancialAccountCreated";
+    public const string FinancialAccountCreatedTopic = "financial-account-created";
     
     public Guid Id { get; set; } = Guid.NewGuid();
     
