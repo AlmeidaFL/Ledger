@@ -3,12 +3,19 @@ using Microsoft.OpenApi.Models;
 using UserApi.Repository;
 using UserApi.Services;
 using ServiceCommons.ApiKey;
+using UserApi.Application.Handlers;
+using UserApi.Messaging;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<KafkaFinancialAccountCreatedSettings>(
+    builder.Configuration.GetSection("Kafka:FinancialAccountCreatedConsumer"));
 
 builder.Services.AddInternalApiKeyAuthentication(builder.Configuration);
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IFinancialAccountCreatedHandler, FinancialAccountCreatedHandler>();
+builder.Services.AddHostedService<FinancialAccountCreatedWorker>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<UserDbContext>(options =>

@@ -1,6 +1,5 @@
 ﻿
 using System.Text.Json;
-using UserApi.Services.Events;
 
 namespace UserApi.Model;
 
