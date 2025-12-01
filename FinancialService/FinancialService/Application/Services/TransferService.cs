@@ -56,7 +56,21 @@ public class TransferService(
             return Result<TransferResult>.Failure("Destination account not found", ErrorType.Unexpected);
         }
         
-        return await ProcessTransferAsync(fromAccountId, toAccountId, amount, currency, idempotencyKey, fromAccount, cancellationToken);
+        var existing = await db.Transactions
+            .AsNoTracking()
+            .FirstOrDefaultAsync(t => t.IdempotencyKey == idempotencyKey, cancellationToken);
+
+        if (existing == null)
+            return await ProcessTransferAsync(fromAccountId, toAccountId, amount, currency, idempotencyKey, fromAccount,
+                cancellationToken);
+       
+        logger.LogInformation("Transfer replay detected for key {IdempotencyKey}", idempotencyKey);
+
+        return Result<TransferResult>.Success(new TransferResult
+        {
+            TransactionId = existing.Id,
+            IsIdempotentReplay = true
+        });
     }
 
     private async Task<Result<TransferResult>> ProcessTransferAsync(
@@ -69,23 +83,6 @@ public class TransferService(
         CancellationToken cancellationToken)
     {
         await using var tx = await db.Database.BeginTransactionAsync(cancellationToken);
-
-        var existing = await db.Transactions
-            .AsNoTracking()
-            .FirstOrDefaultAsync(t => t.IdempotencyKey == idempotencyKey, cancellationToken);
-
-        if (existing != null)
-        {
-            logger.LogInformation("Transfer replay detected for key {IdempotencyKey}", idempotencyKey);
-
-            await tx.RollbackAsync(cancellationToken);
-
-            return Result<TransferResult>.Success(new TransferResult
-            {
-                TransactionId = existing.Id,
-                IsIdempotentReplay = true
-            });
-        }
 
         await accountLockService.LockAccountsAsync(fromAccountId, toAccountId, cancellationToken);
 
