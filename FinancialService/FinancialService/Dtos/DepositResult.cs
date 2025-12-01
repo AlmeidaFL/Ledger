@@ -1,4 +1,4 @@
-﻿namespace FinancialService.Model;
+﻿namespace FinancialService.Dtos;
 
 public class DepositResult
 {
