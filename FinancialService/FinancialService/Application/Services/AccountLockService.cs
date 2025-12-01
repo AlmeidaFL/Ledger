@@ -6,6 +6,7 @@ namespace FinancialService.Application.Services;
 public interface IAccountLockService
 {
     Task LockAccountsAsync(Guid accountA, Guid accountB, CancellationToken cancellationToken = default);
+    Task LockAccountAsync(Guid userId, CancellationToken cancellationToken = default);
 }
 
 public class AccountLockService(FinancialDbContext db) : IAccountLockService
@@ -29,6 +30,17 @@ public class AccountLockService(FinancialDbContext db) : IAccountLockService
                           FOR UPDATE
             """,
             second);
+    }
+
+    public async Task LockAccountAsync(Guid userId, CancellationToken cancellationToken = default)
+    {
+        await db.Database.ExecuteSqlRawAsync(
+            """
+            SELECT 42 FROM "AccountLocks" 
+                          WHERE "AccountId" = {0} 
+                          FOR UPDATE
+            """,
+            userId);
     }
 
     private static (Guid first, Guid second) Order(Guid a, Guid b)
