@@ -1,5 +1,4 @@
 ﻿using LedgerGateway.Integration;
-using IResult = LedgerGateway.Dtos.IResult;
 
 namespace LedgerGateway.Controllers;
 
@@ -17,7 +16,8 @@ public class FinancialController(FinancialService.FinancialServiceClient client)
         var result = await GrpcSafeCaller.Call(async () =>
         {
             var response = await client.DepositAsync(request, cancellationToken: ct);
-            return response.ToDto();
+            return ResultConverter.ToDto(response.Result, response.ToDto());
+            
         });
 
         return this.FromResult(result);
@@ -29,7 +29,7 @@ public class FinancialController(FinancialService.FinancialServiceClient client)
         var result = await GrpcSafeCaller.Call(async () =>
         {
             var response = await client.TransferAsync(request, cancellationToken: ct);
-            return response.ToDto();
+            return ResultConverter.ToDto(response.Result, response.ToDto());
         });
 
         return this.FromResult(result);

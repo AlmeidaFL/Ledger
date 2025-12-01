@@ -25,7 +25,6 @@ public static class TransferConverter
             IsIdempotentReplay = grpc.IsIdempotentReplay,
         };
 
-        response.Result = ResultConverter.ToDto(grpc.Result, response);
         return response;
     }
 }

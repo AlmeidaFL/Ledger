@@ -2,9 +2,8 @@
 
 namespace LedgerGateway.Dtos;
 
-public class DepositResponseDto : IResult
+public class DepositResponseDto
 {
     public string TransactionId { get; set; }
     public string Status { get; set; }
-    public Result Result { get; set; }
 }

@@ -22,7 +22,6 @@ public static class DepositConverter
             Status = grpc.Status,
         };
         
-        response.Result = ResultConverter.ToDto(grpc.Result, response);
         return response;
     }
 }

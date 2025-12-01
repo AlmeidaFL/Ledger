@@ -24,21 +24,21 @@ public class FinancialAccountCreatedWorker(
         using var consumer = new ConsumerBuilder<string, string>(consumerSettings).Build();
         
         consumer.Subscribe(kafkaSettings.Value.Topic);
-
+        
         while (!stoppingToken.IsCancellationRequested)
         {
             try
             {
                 var result = consumer.Consume(stoppingToken);
-
-
+        
+        
                 logger.LogInformation(
                     "Received message. Key={Key}, Value={Value}, Partition={Partition}, Offset={Offset}",
                     result.Message.Key,
                     result.Message.Value,
                     result.Partition,
                     result.Offset);
-
+        
                 var account = GetAccount(result.Message.Value);
                 if (account is null)
                 {
@@ -46,7 +46,7 @@ public class FinancialAccountCreatedWorker(
                     // consumer.Commit(result);
                     continue;
                 }
-
+        
                 await HandleMessage(account, stoppingToken);
                 
                 // consumer.Commit(result);

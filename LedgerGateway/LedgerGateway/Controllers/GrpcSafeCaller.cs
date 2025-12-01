@@ -1,17 +1,15 @@
 ﻿using ServiceCommons;
-using IResult = LedgerGateway.Dtos.IResult;
 
 namespace LedgerGateway.Controllers;
 
 public static class GrpcSafeCaller
 {
     public static async Task<Result> Call<T>(Func<Task<T>> action)
-        where T : IResult
+        where T : Result
     {
         try
         {
-            var data = await action();
-            return data.Result;
+            return await action();
         }
         catch (Grpc.Core.RpcException rpcEx)
         {
