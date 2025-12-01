@@ -1,0 +1,7 @@
+﻿namespace FinancialService.Model;
+
+public class DepositResult
+{
+    public Guid TransactionId { get; set; }
+    public bool IsIdempontentReplay { get; set; }
+}

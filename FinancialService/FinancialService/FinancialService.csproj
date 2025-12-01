@@ -9,6 +9,7 @@
 
     <ItemGroup>
         <Protobuf Include="Protos\greet.proto" GrpcServices="Server"/>
+        <Protobuf Include="Protos\financial_service.proto" GrpcServices="Server"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -27,6 +28,10 @@
       <Content Include="..\.dockerignore">
         <Link>.dockerignore</Link>
       </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\ServiceCommons\ServiceCommons\ServiceCommons.csproj" />
     </ItemGroup>
 
 </Project>

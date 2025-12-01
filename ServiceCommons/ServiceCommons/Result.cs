@@ -37,6 +37,9 @@ public class Result<T> : Result
 
     public new static Result<T> Failure(string error, ErrorType? errorType = null)
         => new Result<T>(false, default, error, errorType);
+    
+    public new static Result<T> Failure(string error, T value, ErrorType? errorType = null)
+        => new Result<T>(false, value, error, errorType);
 }
 
 public enum ErrorType

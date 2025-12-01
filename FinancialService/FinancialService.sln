@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinancialService", "Financi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D7C025AE-1619-48B1-906E-CA7FF7481BCD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceCommons", "..\ServiceCommons\ServiceCommons\ServiceCommons.csproj", "{11347229-5B26-4C4E-A26F-131569AC1C02}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -14,5 +16,9 @@ Global
 		{77606A10-E098-4D01-A742-6250935F72BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77606A10-E098-4D01-A742-6250935F72BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77606A10-E098-4D01-A742-6250935F72BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11347229-5B26-4C4E-A26F-131569AC1C02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11347229-5B26-4C4E-A26F-131569AC1C02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11347229-5B26-4C4E-A26F-131569AC1C02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11347229-5B26-4C4E-A26F-131569AC1C02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

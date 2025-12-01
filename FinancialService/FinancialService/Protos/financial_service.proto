@@ -1,0 +1,21 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "FinancialService";
+
+package financial;
+
+service FinancialService {
+  rpc Deposit (DepositRequest) returns (DepositResponse);
+}
+
+message DepositRequest {
+  string user_id = 1;
+  int64 amount = 2;
+  string currency = 3;
+  string idempotency_key = 4;
+}
+
+message DepositResponse {
+  string transaction_id = 1;
+  string status = 2;
+}
