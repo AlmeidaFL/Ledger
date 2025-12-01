@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ServiceCommons;
 using UserApi.Converters;
+using UserApi.Dtos;
 using UserApi.Services;
 
 namespace UserApi.Controllers;
@@ -13,6 +14,7 @@ public class UserController(IUserService userService) : ControllerBase
 {
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(UserResponse))]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request,
         CancellationToken cancelationToken = default)
     {
@@ -26,17 +28,18 @@ public class UserController(IUserService userService) : ControllerBase
     [HttpGet("{userId:guid}")]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(UserResponse))]
     public async Task<IActionResult> GetUser(Guid userId, CancellationToken cancelationToken = default)
     {
         var requestingUserId = GetRequestingUserId();
         var result = await userService.GetUserAsync(userId, requestingUserId, cancelationToken);
-        
         return this.FromResult(result);
     }
     
     [HttpPut("{userId:guid}")]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(UserResponse))]
     public async Task<IActionResult> UpdateUser(Guid userId, [FromBody] UpdateUserRequest request, CancellationToken cancellationToken)
     {
         var requestingUserId = GetRequestingUserId();

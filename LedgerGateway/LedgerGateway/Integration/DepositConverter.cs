@@ -20,7 +20,6 @@ public static class DepositConverter
         {
             TransactionId = grpc.TransactionId,
             Status = grpc.Status,
-            Result = ResultConverter.ToDto(grpc.Result)
         };
         
         response.Result = ResultConverter.ToDto(grpc.Result, response);

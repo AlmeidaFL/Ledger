@@ -16,6 +16,11 @@
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.6"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+        <PackageReference Include="NSwag.MSBuild" Version="14.6.3">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6" />
     </ItemGroup>
 
@@ -35,5 +40,15 @@
       <ProjectReference Include="..\..\ServiceCommons\ServiceCommons\ServiceCommons.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <None Include="user-api.nswag" />
+    </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="RestClients\" />
+    </ItemGroup>
+
+    <Target Name="GenerateUserApiClient" BeforeTargets="Build">
+        <Exec Command="$(NSwagExe_Net90) run user-api.nswag" />
+    </Target>
 </Project>
