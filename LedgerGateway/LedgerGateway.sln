@@ -7,9 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		compose.yaml = compose.yaml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceCommons.Jwt", "..\ServiceCommons\ServiceCommons.Jwt\ServiceCommons.Jwt.csproj", "{88D9D63E-74D0-4CFD-883E-8876471EC10A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceCommons.Jwt", "..\ServiceCommons\ServiceCommons.Jwt\ServiceCommons.Jwt.csproj", "{CE898EF8-2916-4049-9BEB-792201B3E842}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceCommons", "..\ServiceCommons\ServiceCommons\ServiceCommons.csproj", "{92D37077-D3EF-47C1-8156-9F50D9245998}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,5 +27,9 @@ Global
 		{CE898EF8-2916-4049-9BEB-792201B3E842}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE898EF8-2916-4049-9BEB-792201B3E842}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE898EF8-2916-4049-9BEB-792201B3E842}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92D37077-D3EF-47C1-8156-9F50D9245998}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92D37077-D3EF-47C1-8156-9F50D9245998}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92D37077-D3EF-47C1-8156-9F50D9245998}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92D37077-D3EF-47C1-8156-9F50D9245998}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

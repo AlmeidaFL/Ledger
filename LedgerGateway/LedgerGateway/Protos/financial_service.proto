@@ -1,0 +1,45 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "FinancialService";
+
+package financial;
+
+service FinancialService {
+  rpc Deposit (DepositRequest) returns (DepositResponse);
+  rpc Transfer (TransferRequest) returns (TransferResponse);
+}
+
+message Result {
+  bool isSuccess = 1;
+  string errorMessage = 2;
+  string errorType = 3;
+}
+
+message DepositRequest {
+  string user_id = 1;
+  int64 amount = 2;
+  string currency = 3;
+  string idempotency_key = 4;
+}
+
+message DepositResponse {
+  string transaction_id = 1;
+  string status = 2;
+  Result result = 3;
+}
+
+message TransferRequest {
+  string from_account_id = 1;
+  string to_account_id = 2;
+  int64 amount = 3;
+  string currency = 4;
+  string idempotency_key = 5;
+  string metadata = 6;
+}
+
+message TransferResponse {
+  string transaction_id = 1;
+  string status = 2;
+  bool is_idempotent_replay = 3;
+  Result result = 4;
+}

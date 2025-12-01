@@ -5,10 +5,10 @@ public class Result
     public bool IsSuccess { get; }
     public bool IsFailure => !IsSuccess;
     public ErrorType? ErrorType { get; }
-
+    public object? Value { get; }
     public string? Error { get; }
 
-    protected Result(bool isSuccess, string? error, ErrorType? errorType = null)
+    protected Result(bool isSuccess, string? error, object? value = null, ErrorType? errorType = null)
     {
         IsSuccess = isSuccess;
         Error = error;
@@ -17,6 +17,9 @@ public class Result
 
     public static Result Success()
         => new Result(true, null);
+    
+    public static Result Success(object? value)
+        => new Result(true, null, value);
 
     public static Result Failure(string error, ErrorType? errorType = null)
         => new Result(false, error, errorType);

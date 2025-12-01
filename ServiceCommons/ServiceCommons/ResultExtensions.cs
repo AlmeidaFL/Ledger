@@ -6,10 +6,15 @@ public static class ResultExtensions
 {
     public static ActionResult FromResult(this ControllerBase controller, Result result)
     {
-        if (result.IsSuccess)
+        if (!result.IsSuccess) return controller.MapError(result);
+        
+        if (result.Value == null)
+        {
             return controller.Ok();
+        }
+        
+        return controller.Ok(result.Value);
 
-        return controller.MapError(result);
     }
 
     public static ActionResult FromResult<T>(this ControllerBase controller, Result<T> result)

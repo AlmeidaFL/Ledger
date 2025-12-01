@@ -1,9 +1,6 @@
 using Microsoft.OpenApi.Models;
-using ServiceCommons.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddJwtAuthentication(builder.Configuration);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -14,6 +11,12 @@ builder.Services.AddSwaggerGen(c =>
         Title = "LedgerGateway",
         Version = "v1",
     });
+});
+
+builder.Services.AddGrpcClient<FinancialService.FinancialService.FinancialServiceClient>(o =>
+{
+    o.Address = new Uri(builder.Configuration["FinancialService:GrpcUrl"]
+                        ?? throw new InvalidOperationException("Missing FinancialService:GrpcUrl"));
 });
 
 var app = builder.Build();
