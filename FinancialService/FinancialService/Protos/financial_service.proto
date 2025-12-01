@@ -12,6 +12,7 @@ service FinancialService {
 message Result {
   bool isSuccess = 1;
   string errorMessage = 2;
+  string errorType = 3;
 }
 
 message DepositRequest {

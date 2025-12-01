@@ -26,6 +26,7 @@ public class FinancialService(
             {
                 ErrorMessage = result.Error ?? string.Empty,
                 IsSuccess = result.IsSuccess,
+                ErrorType = result.ErrorType?.ToString() ?? string.Empty,
             }
         };
     }
@@ -51,6 +52,7 @@ public class FinancialService(
             {
                 ErrorMessage = result.Error ?? string.Empty,
                 IsSuccess = result.IsSuccess,
+                ErrorType = result.ErrorType?.ToString() ?? string.Empty,
             }
         };
     }
