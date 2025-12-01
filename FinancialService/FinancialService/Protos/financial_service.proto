@@ -6,6 +6,7 @@ package financial;
 
 service FinancialService {
   rpc Deposit (DepositRequest) returns (DepositResponse);
+  rpc Transfer (TransferRequest) returns (TransferResponse);
 }
 
 message DepositRequest {
@@ -18,4 +19,19 @@ message DepositRequest {
 message DepositResponse {
   string transaction_id = 1;
   string status = 2;
+}
+
+message TransferRequest {
+  string from_account_id = 1;
+  string to_account_id = 2;
+  int64 amount = 3;
+  string currency = 4;
+  string idempotency_key = 5;
+  string metadata = 6;
+}
+
+message TransferResponse {
+  string transaction_id = 1;
+  string status = 2;
+  bool is_idempotent_replay = 3;
 }

@@ -7,7 +7,7 @@ public class JournalEntry
     public Guid AccountId { get; set; }
     public EntryType Type { get; set; }
     public long Amount { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     
     public Transaction Transaction { get; set; }
     public Account Account { get; set; }

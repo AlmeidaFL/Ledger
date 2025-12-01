@@ -10,6 +10,7 @@ public class FinancialDbContext(DbContextOptions<FinancialDbContext> options) : 
     public DbSet<User> Users { get; set; }
     public DbSet<JournalEntry> JournalEntries { get; set; }
     public DbSet<OutboxMessage> OutboxMessages { get; set; }
+    public DbSet<AccountLock> AccountLocks { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

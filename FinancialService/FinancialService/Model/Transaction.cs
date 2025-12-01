@@ -2,10 +2,10 @@
 
 public class Transaction
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; set; } = Guid.CreateVersion7();
     public string IdempotencyKey { get; set; }
     public TransferenceType Type { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     // Json
     public string Metadata { get; set; } = "{}";
 

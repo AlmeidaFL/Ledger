@@ -1,4 +1,6 @@
-﻿using FinancialService.Model;
+﻿using FinancialService.Application.Utils;
+using FinancialService.Dtos;
+using FinancialService.Model;
 using FinancialService.Repository;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
@@ -88,7 +90,7 @@ public class DepositService(
             };
             return Result<DepositResult>.Success(depositResult);
         }
-        catch (DbUpdateException ex) when (IsUniqueViolation(ex))
+        catch (DbUpdateException ex) when (ExceptionUtils.IsUniqueViolation(ex))
         {
             var existing = await db.Transactions
                 .AsNoTracking()
@@ -107,10 +109,5 @@ public class DepositService(
             logger.LogError(ex, "Deposit {DepositAmount} for user {UserId} failed", amount, userId);
             return Result<DepositResult>.Failure("Deposit failed", ErrorType.Unexpected);
         }
-    }
-    
-    private static bool IsUniqueViolation(DbUpdateException ex)
-    {
-        return ex.InnerException is PostgresException { SqlState: PostgresErrorCodes.UniqueViolation };
     }
 }

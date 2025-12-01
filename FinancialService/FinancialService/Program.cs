@@ -12,6 +12,8 @@ builder.Services.Configure<KafkaUserCreatedConsumerSettings>(
 builder.Services.AddHostedService<UserCreatedConsumerWorker>();
 builder.Services.AddScoped<IUserCreatedHandler, UserCreatedHandler>();
 builder.Services.AddScoped<IDepositService, DepositService>();
+builder.Services.AddScoped<ITransferService, TransferService>();
+builder.Services.AddScoped<IAccountLockService, AccountLockService>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<FinancialDbContext>(options =>
