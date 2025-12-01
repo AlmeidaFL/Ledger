@@ -9,6 +9,11 @@ service FinancialService {
   rpc Transfer (TransferRequest) returns (TransferResponse);
 }
 
+message Result {
+  bool isSuccess = 1;
+  string errorMessage = 2;
+}
+
 message DepositRequest {
   string user_id = 1;
   int64 amount = 2;
@@ -19,6 +24,7 @@ message DepositRequest {
 message DepositResponse {
   string transaction_id = 1;
   string status = 2;
+  Result result = 3;
 }
 
 message TransferRequest {
@@ -34,4 +40,5 @@ message TransferResponse {
   string transaction_id = 1;
   string status = 2;
   bool is_idempotent_replay = 3;
+  Result result = 4;
 }

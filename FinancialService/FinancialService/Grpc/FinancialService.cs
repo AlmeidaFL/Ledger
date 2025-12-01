@@ -17,11 +17,16 @@ public class FinancialService(
             idempotencyKey: request.IdempotencyKey,
             context.CancellationToken);
 
-        var status = result.IsSuccess ? "success" : result.Error;
+        var status = result.IsSuccess ? "success" : string.Empty;
         return new DepositResponse
         {
             TransactionId = result.Value?.TransactionId.ToString() ?? string.Empty,
             Status = status,
+            Result = new Result
+            {
+                ErrorMessage = result.Error ?? string.Empty,
+                IsSuccess = result.IsSuccess,
+            }
         };
     }
 
@@ -36,12 +41,17 @@ public class FinancialService(
             metadata: request.Metadata,
             context.CancellationToken);
         
-        var status = result.IsSuccess ? "success" : result.Error;
+        var status = result.IsSuccess ? "success" : String.Empty;
         return new TransferResponse
         {
             TransactionId = result.Value?.TransactionId.ToString() ?? string.Empty,
             Status = status,
             IsIdempotentReplay = result.Value?.IsIdempotentReplay ?? false,
+            Result = new Result
+            {
+                ErrorMessage = result.Error ?? string.Empty,
+                IsSuccess = result.IsSuccess,
+            }
         };
     }
 }
