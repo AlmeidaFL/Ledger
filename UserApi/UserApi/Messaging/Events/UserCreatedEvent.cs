@@ -1,6 +1,6 @@
 ﻿using UserApi.Model;
 
-namespace UserApi.Services.Events;
+namespace UserApi.Messaging.Events;
 
 public record UserCreatedEvent : IOutboxEvent
 {

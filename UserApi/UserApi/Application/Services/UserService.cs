@@ -3,9 +3,9 @@ using ServiceCommons;
 using ServiceCommons.Utils;
 using UserApi.Converters;
 using UserApi.Dtos;
+using UserApi.Messaging.Events;
 using UserApi.Model;
 using UserApi.Repository;
-using UserApi.Services.Events;
 using UserApi.Services.Exceptions;
 
 namespace UserApi.Services;
