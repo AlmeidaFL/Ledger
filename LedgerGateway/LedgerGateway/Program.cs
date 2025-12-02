@@ -34,29 +34,23 @@ return;
 void ConfigureClients(WebApplicationBuilder webApplicationBuilder)
 {
     var integration = builder.Configuration.GetSection("Integration");
-    
-    webApplicationBuilder.Services.AddTransient<ApiKeyHttpMesageHandler>(_ =>
-    {
-        var apiKey = GetOrThrow("ClientApi", "ApiKey");
-        return new ApiKeyHttpMesageHandler(apiKey);
-    });
 
     webApplicationBuilder.Services.AddHttpClient<UserApiClient>(client =>
     {
-        client.BaseAddress = new Uri(GetOrThrow("ClientApi", "BaseUrl"));
+        client.BaseAddress = new Uri(GetOrThrow("SimpleAuth", "BaseUrl"));
     })
-    .AddHttpMessageHandler<ApiKeyHttpMesageHandler>();
+    .AddHttpMessageHandler(() => new ApiKeyHttpMesageHandler(GetOrThrow("SimpleAuth", "ApiKey")));
     
-    webApplicationBuilder.Services.AddTransient<ApiKeyGrpcInterceptor>(_ =>
+    webApplicationBuilder.Services.AddHttpClient<UserApiClient>(client =>
     {
-        var apiKey = GetOrThrow("FinancialService", "ApiKey");
-        return new ApiKeyGrpcInterceptor(apiKey);
-    });
+        client.BaseAddress = new Uri(GetOrThrow("UserApi", "BaseUrl"));
+    })
+    .AddHttpMessageHandler(() => new ApiKeyHttpMesageHandler(GetOrThrow("UserApi", "ApiKey")));
     
     webApplicationBuilder.Services.AddGrpcClient<FinancialService.FinancialService.FinancialServiceClient>(o =>
     {
-        o.Address =new Uri(GetOrThrow("FinancialService", "BaseUrl"));
-    }).AddInterceptor<ApiKeyGrpcInterceptor>();
+        o.Address = new Uri(GetOrThrow("FinancialService", "BaseUrl"));
+    }).AddInterceptor(() => new ApiKeyGrpcInterceptor(GetOrThrow("FinancialService", "ApiKey")));
     return;
 
     string GetOrThrow(string serviceName, string key)
