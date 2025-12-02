@@ -35,11 +35,10 @@ public class InternalApiKeyAuthenticationHandler(
             return Task.FromResult(AuthenticateResult.Fail("Invalid API key"));
         }
         
-        const string schemeName = "InternalApiKey";
-        var identity = new ClaimsIdentity(new[]
-        {
+        const string schemeName = InternalApiKeyServerExtensions.Scheme;
+        var identity = new ClaimsIdentity([
             new Claim(ClaimTypes.Name, "internal-client")
-        }, schemeName);
+        ], schemeName);
         
         var principal = new ClaimsPrincipal(identity);
         var ticket = new AuthenticationTicket(principal, schemeName);

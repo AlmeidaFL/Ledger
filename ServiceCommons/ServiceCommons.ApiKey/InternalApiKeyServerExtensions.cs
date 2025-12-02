@@ -6,21 +6,21 @@ namespace ServiceCommons.ApiKey;
 
 public static class InternalApiKeyServerExtensions
 {
+    public const string Scheme = "InternalApiKey";
+
     public static AuthenticationBuilder AddInternalApiKeyAuthentication(
         this IServiceCollection services,
         IConfiguration configuration)
     {
         services.Configure<InternalApiSettings>(configuration.GetSection("InternalApiSettings"));
 
-        const string scheme = "InternalApiKey";
-
         return services
             .AddAuthentication(options =>
             {
-                options.DefaultAuthenticateScheme = scheme;
-                options.DefaultChallengeScheme = scheme;
+                options.DefaultAuthenticateScheme = Scheme;
+                options.DefaultChallengeScheme = Scheme;
             })
             .AddScheme<AuthenticationSchemeOptions, InternalApiKeyAuthenticationHandler>(
-                scheme, _ => { });
+                Scheme, _ => { });
     }
 }

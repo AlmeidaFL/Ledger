@@ -1,4 +1,6 @@
 // using LedgerGateway.RestClients;
+
+using LedgerGateway.RestClients.UserApi;
 using Microsoft.OpenApi.Models;
 using ServiceCommons.ApiKey;
 
@@ -39,11 +41,11 @@ void ConfigureClients(WebApplicationBuilder webApplicationBuilder)
         return new ApiKeyHttpMesageHandler(apiKey);
     });
 
-    // webApplicationBuilder.Services.AddHttpClient<UserApiClient>(client =>
-    // {
-    //     client.BaseAddress = new Uri(GetOrThrow("ClientApi", "BaseUrl"));
-    // })
-    // .AddHttpMessageHandler<ApiKeyHttpMesageHandler>();
+    webApplicationBuilder.Services.AddHttpClient<UserApiClient>(client =>
+    {
+        client.BaseAddress = new Uri(GetOrThrow("ClientApi", "BaseUrl"));
+    })
+    .AddHttpMessageHandler<ApiKeyHttpMesageHandler>();
     
     webApplicationBuilder.Services.AddTransient<ApiKeyGrpcInterceptor>(_ =>
     {
