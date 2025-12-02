@@ -1,0 +1,474 @@
+openapi: 3.0.4
+info:
+  title: SimpleAuth
+  version: v1
+paths:
+  /auth/register:
+    post:
+      tags:
+      - Auth
+      operationId: register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        409:
+          description: Conflict
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        200:
+          description: OK
+  /auth/login:
+    post:
+      tags:
+      - Auth
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        429:
+          description: Too Many Requests
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        404:
+          description: Not Found
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        403:
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        200:
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/Credentials'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Credentials'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/Credentials'
+  /auth/refresh:
+    post:
+      tags:
+      - Auth
+      operationId: refresh
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/RefreshRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/RefreshRequest'
+      responses:
+        404:
+          description: Not Found
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        403:
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        409:
+          description: Conflict
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        200:
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/Credentials'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Credentials'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/Credentials'
+  /auth/logout/{id}:
+    post:
+      tags:
+      - Auth
+      operationId: logout
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogoutRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/LogoutRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/LogoutRequest'
+      responses:
+        200:
+          description: OK
+  /auth/logout-all/{id}:
+    post:
+      tags:
+      - Auth
+      operationId: logout-all
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        409:
+          description: Conflict
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        200:
+          description: OK
+  /auth/request-temp-code/{id}:
+    post:
+      tags:
+      - Auth
+      operationId: request-temp-code
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/TemporaryCodeResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TemporaryCodeResponse'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/TemporaryCodeResponse'
+  /auth/login-temp:
+    post:
+      tags:
+      - Auth
+      operationId: login-temp
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginWithTemporaryCodeRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/LoginWithTemporaryCodeRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/LoginWithTemporaryCodeRequest'
+      responses:
+        403:
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        200:
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/Credentials'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Credentials'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/Credentials'
+  /auth/google:
+    post:
+      tags:
+      - Auth
+      operationId: google
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GoogleLoginRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/GoogleLoginRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/GoogleLoginRequest'
+      responses:
+        200:
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/Credentials'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Credentials'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/Credentials'
+        401:
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        409:
+          description: Conflict
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+components:
+  schemas:
+    Credentials:
+      type: object
+      additionalProperties: false
+      properties:
+        accessToken:
+          type: string
+          nullable: true
+        refreshToken:
+          type: string
+          nullable: true
+    GoogleLoginRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        idToken:
+          type: string
+          nullable: true
+        userAgentInfo:
+          $ref: '#/components/schemas/UserAgentInfo'
+    LoginRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - email
+      - password
+      - userAgentInfo
+      properties:
+        email:
+          type: string
+          nullable: true
+        password:
+          type: string
+          nullable: true
+        userAgentInfo:
+          $ref: '#/components/schemas/UserAgentInfo'
+    LoginWithTemporaryCodeRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - code
+      - email
+      - userAgentInfo
+      properties:
+        email:
+          type: string
+          minLength: 1
+        code:
+          type: string
+          minLength: 1
+        userAgentInfo:
+          $ref: '#/components/schemas/UserAgentInfo'
+    LogoutRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        refreshToken:
+          type: string
+          nullable: true
+    ProblemDetails:
+      type: object
+      additionalProperties: {}
+      properties:
+        type:
+          type: string
+          nullable: true
+        title:
+          type: string
+          nullable: true
+        status:
+          type: integer
+          format: int32
+          nullable: true
+        detail:
+          type: string
+          nullable: true
+        instance:
+          type: string
+          nullable: true
+    RefreshRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        refreshToken:
+          type: string
+          nullable: true
+        userAgentInfo:
+          $ref: '#/components/schemas/UserAgentInfo'
+    RegisterRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        email:
+          type: string
+          nullable: true
+        password:
+          type: string
+          nullable: true
+    TemporaryCodeResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        message:
+          type: string
+          nullable: true
+    UserAgentInfo:
+      type: object
+      additionalProperties: false
+      properties:
+        ipAddress:
+          type: string
+          nullable: true
+        userAgent:
+          type: string
+          nullable: true
+        browserFamily:
+          type: string
+          nullable: true
+        browserVersion:
+          type: string
+          nullable: true
+        deviceFamily:
+          type: string
+          nullable: true
+        deviceBrand:
+          type: string
+          nullable: true
+        clientName:
+          type: string
+          nullable: true
+        clientType:
+          type: string
+          nullable: true
+tags:
+- name: Auth
