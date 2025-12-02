@@ -1,6 +1,0 @@
-﻿services:
-  financialservice:
-    image: financialservice
-    build:
-      context: .
-      dockerfile: FinancialService/Dockerfile

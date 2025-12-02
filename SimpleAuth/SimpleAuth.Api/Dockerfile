@@ -1,0 +1,25 @@
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+WORKDIR /app
+
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+ARG BUILD_CONFIGURATION=Release
+WORKDIR /src
+
+COPY ServiceCommons/ServiceCommons/ServiceCommons.csproj ServiceCommons/ServiceCommons/
+COPY SimpleAuth/SimpleAuth.Api/SimpleAuth.Api.csproj SimpleAuth/SimpleAuth.Api/
+
+RUN dotnet restore "SimpleAuth/SimpleAuth.Api/SimpleAuth.Api.csproj"
+
+COPY ServiceCommons/ ServiceCommons/
+COPY SimpleAuth/ SimpleAuth/
+
+WORKDIR /src/SimpleAuth/SimpleAuth.Api
+RUN dotnet build "SimpleAuth.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "SimpleAuth.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "SimpleAuth.Api.dll"]
