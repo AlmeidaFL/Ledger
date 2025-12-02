@@ -1,0 +1,23 @@
+﻿{
+  "runtime": "Net90",
+  "defaultVariables": null,
+  "documentGenerator": {
+    "fromDocument": {
+      "json": "../../open-api/UserApi.json",  
+      "output": "../nswag/user-api.yaml"
+    }
+  },
+  "codeGenerators": {
+    "openApiToCSharpClient": {
+      "className": "UserApiClient",
+      "exceptionClass": "ApiException",
+      "namespace": "LedgerGateway.RestClients.UserApi",
+      "output": "../RestClients/UserApiClient.g.cs",
+      "jsonLibrary": "NewtonsoftJson",
+      "useBaseUrl": true,
+      "generateClientInterfaces": false,
+      "injectHttpClient": true,
+      "disposeHttpClient": false,
+    }
+  }
+}

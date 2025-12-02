@@ -1,18 +1,18 @@
-﻿{
+{
   "runtime": "Net90",
   "defaultVariables": null,
   "documentGenerator": {
     "fromDocument": {
-      "json": "../../open-api/UserApi.json",  
-      "output": "nswag/user-api.yaml"
+      "json": "../../open-api/SimpleAuth.json",  
+      "output": "../nswag/simple-auth.yaml"
     }
   },
   "codeGenerators": {
     "openApiToCSharpClient": {
-      "className": "UserApiClient",
-      "namespace": "LedgerGateway.RestClients",
-      "output": "RestClients/UserApiClient.g.cs",
-      "jsonLibrary": "NewtonsoftJson",
+      "className": "SimpleAuthClient",
+      "exceptionClass": "ApiException",
+      "namespace": "LedgerGateway.RestClients.SimpleAuth",
+      "output": "../RestClients/SimpleAuthClient.g.cs",
       "useBaseUrl": true,
       "generateClientInterfaces": false,
       "injectHttpClient": true,

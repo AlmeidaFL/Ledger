@@ -41,15 +41,10 @@
       <ProjectReference Include="..\..\ServiceCommons\ServiceCommons\ServiceCommons.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-        <None Include="user-api.nswag" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="RestClients\" />
-    </ItemGroup>
-
     <Target Name="GenerateUserApiClient" BeforeTargets="Build">
-        <Exec Command="$(NSwagExe_Net90) run user-api.nswag" />
+        <Exec Command="$(NSwagExe_Net90) run nswag/user-api.nswag" />
+    </Target>
+    <Target Name="GenerateSimpleAuhtClient" BeforeTargets="Build">
+        <Exec Command="$(NSwagExe_Net90) run nswag/simple-auth.nswag" />
     </Target>
 </Project>

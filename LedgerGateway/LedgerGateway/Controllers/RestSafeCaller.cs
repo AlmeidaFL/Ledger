@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using LedgerGateway.Exceptions;
 using LedgerGateway.RestClients;
 
 namespace LedgerGateway.Controllers;
@@ -16,10 +17,12 @@ public static class RestSafeCaller
             var result = await action();
             return Result<T>.Success(result);
         }
-        catch (ApiException apiEx)
+        catch (Exception ex) when (IsNswaqApiException(ex))
         {
+            var apiEx = UnifiedApiException.From(ex);
+            
             ProblemDetails? problem = null;
-
+        
             try
             {
                 problem = JsonSerializer.Deserialize<ProblemDetails>(apiEx.Response);
@@ -28,20 +31,20 @@ public static class RestSafeCaller
             {
                 // ignored
             }
-
+        
             var errorMessage = problem?.Detail ?? apiEx.Message;
-
+        
             return apiEx.StatusCode switch
             {
                 (int)HttpStatusCode.NotFound =>
                     Result<T>.Failure(errorMessage, ErrorType.NotFound),
-
+        
                 (int)HttpStatusCode.Forbidden =>
                     Result<T>.Failure(errorMessage, ErrorType.Forbidden),
-
+        
                 (int)HttpStatusCode.Conflict =>
                     Result<T>.Failure(errorMessage, ErrorType.Conflict),
-
+        
                 _ =>
                     Result<T>.Failure(errorMessage, ErrorType.Unexpected)
             };
@@ -50,5 +53,11 @@ public static class RestSafeCaller
         {
             return Result<T>.Failure(ex.Message, ErrorType.Unexpected);
         }
+    }
+    
+    private static bool IsNswaqApiException(Exception ex)
+    {
+        var type = ex.GetType();
+        return type.Name == "ApiException" && type.Namespace?.Contains("RestClients") == true;
     }
 }
