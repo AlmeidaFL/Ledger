@@ -65,6 +65,20 @@ services:
     networks:
       - ledger-net
 
+  ledger-gateway:
+    image: ledger-gateway
+    container_name: ledger-gateway
+    build:
+      context: .
+      dockerfile: LedgerGateway/LedgerGateway/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://0.0.0.0:5000
+    ports:
+      - "5000:5000"
+    networks:
+      - ledger-net
+
 volumes:
   user-data:
 
