@@ -10,10 +10,10 @@ public static class ResultExtensions
         if (!result.IsSuccess)
             return controller.MapError(result);
 
-        if (result is Result<object> { Value: null })
+        if (result.Value == null)
             return controller.NoContent();
 
-        return controller.Ok();
+        return controller.Ok(result.Value);
     }
 
     public static ActionResult FromResult<T>(this ControllerBase controller, Result<T> result)
@@ -21,12 +21,12 @@ public static class ResultExtensions
         if (!result.IsSuccess) return controller.MapError(result);
         
         if (result.Value is not null)
-            return controller.Ok(result.Value);
+            return controller.NoContent();
         
-        return controller.NoContent();
+        return controller.Ok(result.Value);
     }
 
-    private static ActionResult MapError(this ControllerBase controller, Result result)
+    private static ObjectResult MapError(this ControllerBase controller, Result result)
     {
         return result.ErrorType switch
         {
