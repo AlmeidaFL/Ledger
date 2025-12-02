@@ -10,6 +10,51 @@ using System.Net;
 
 public static class RestSafeCaller
 {
+    public static async Task<Result> Call(Func<Task> action)
+    {
+        try
+        {
+            await action();
+            return Result.Success();
+        }
+        catch (Exception ex) when (IsNswaqApiException(ex))
+        {
+            var apiEx = UnifiedApiException.From(ex);
+            
+            ProblemDetails? problem = null;
+        
+            try
+            {
+                problem = JsonSerializer.Deserialize<ProblemDetails>(apiEx.Response);
+            }
+            catch
+            {
+                // ignored
+            }
+        
+            var errorMessage = problem?.Detail ?? apiEx.Message;
+        
+            return apiEx.StatusCode switch
+            {
+                (int)HttpStatusCode.NotFound =>
+                    Result.Failure(errorMessage, ErrorType.NotFound),
+        
+                (int)HttpStatusCode.Forbidden =>
+                    Result.Failure(errorMessage, ErrorType.Forbidden),
+        
+                (int)HttpStatusCode.Conflict =>
+                    Result.Failure(errorMessage, ErrorType.Conflict),
+        
+                _ =>
+                    Result.Failure(errorMessage, ErrorType.Unexpected)
+            };
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure(ex.Message, ErrorType.Unexpected);
+        }
+    }
+    
     public static async Task<Result<T>> Call<T>(Func<Task<T>> action)
     {
         try

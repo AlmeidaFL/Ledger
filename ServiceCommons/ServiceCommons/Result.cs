@@ -43,6 +43,9 @@ public class Result<T> : Result
     
     public new static Result<T> Failure(string error, T value, ErrorType? errorType = null)
         => new Result<T>(false, value, error, errorType);
+    
+    public new static Result<T> Failure<U>(Result<U> result)
+        => new Result<T>(false, default, result.Error, result.ErrorType);
 }
 
 public enum ErrorType
@@ -50,5 +53,7 @@ public enum ErrorType
     Forbidden,
     NotFound,
     Conflict,
-    Unexpected
+    Unexpected,
+    TooManyAttempts,
+    Unauthorized
 } 
