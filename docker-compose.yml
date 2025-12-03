@@ -100,7 +100,7 @@ services:
     volumes:
       - ./Kafka/data/kafka:/var/lib/kafka/data
     networks:
-      - kafka-net
+      - ledger-net
       
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
@@ -113,7 +113,7 @@ services:
       KAFKA_CLUSTERS_0_NAME: "local"
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "broker:9092"
     networks:
-      - kafka-net
+      - ledger-net
 
 volumes:
   user-data:

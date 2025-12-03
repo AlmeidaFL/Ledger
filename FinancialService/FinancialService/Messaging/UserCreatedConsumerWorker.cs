@@ -17,7 +17,7 @@ public class UserCreatedConsumerWorker(
         {
             BootstrapServers = options.Value.BootstrapServers,
             GroupId = options.Value.GroupId,
-            AutoOffsetReset = AutoOffsetReset.Earliest,
+            AutoOffsetReset = AutoOffsetReset.Latest,
             EnableAutoCommit = false,
         };
         
@@ -44,19 +44,27 @@ public class UserCreatedConsumerWorker(
                 if (user is null)
                 {
                     logger.LogWarning("Deserialized event is null");
-                    // consumer.Commit(result);
+                    consumer.Commit(result);
                     continue;
                 }
 
                 await HandleMessage(user, stoppingToken);
 
-                // consumer.Commit(result);
+                consumer.Commit(result);
+            }
+            catch (ConsumeException ex) when (ex.Error.Code == ErrorCode.UnknownTopicOrPart)
+            {
+                logger.LogWarning("Topic {Topic} not ready yet. Retrying in 5 seconds...", options.Value.Topic);
+                await Task.Delay(5000, stoppingToken);
+                continue;
             }
             catch (ConsumeException ex)
             {
                 logger.LogError(ex, "Error occured while consuming message");
                 break;
             }
+            
+            await Task.Delay(5000, stoppingToken);
         }
         
         consumer.Close();
