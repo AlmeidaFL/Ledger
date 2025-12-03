@@ -7,6 +7,7 @@ WORKDIR /src
 
 COPY open-api/ ./open-api/
 COPY ServiceCommons/ServiceCommons/ServiceCommons.csproj ServiceCommons/ServiceCommons/
+COPY ServiceCommons/ServiceCommons.OpenTelemetry/ServiceCommons.OpenTelemetry.csproj ServiceCommons/ServiceCommons.OpenTelemetry/
 COPY ServiceCommons/ServiceCommons.ApiKey/ServiceCommons.ApiKey.csproj ServiceCommons/ServiceCommons.ApiKey/
 COPY LedgerGateway/LedgerGateway/LedgerGateway.csproj LedgerGateway/LedgerGateway/
 

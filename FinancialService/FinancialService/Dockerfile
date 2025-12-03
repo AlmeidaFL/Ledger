@@ -7,6 +7,7 @@ WORKDIR /src
 
 COPY ServiceCommons/ServiceCommons/ServiceCommons.csproj ServiceCommons/ServiceCommons/
 COPY ServiceCommons/ServiceCommons.ApiKey/ServiceCommons.ApiKey.csproj ServiceCommons/ServiceCommons.ApiKey/
+COPY ServiceCommons/ServiceCommons.OpenTelemetry/ServiceCommons.OpenTelemetry.csproj ServiceCommons/ServiceCommons.OpenTelemetry/
 COPY FinancialService/FinancialService/FinancialService.csproj FinancialService/FinancialService/
 
 RUN dotnet restore "FinancialService/FinancialService/FinancialService.csproj"

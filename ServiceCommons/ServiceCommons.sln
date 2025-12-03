@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceCommons.Grpc", "Serv
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceCommons.ApiKey", "ServiceCommons.ApiKey\ServiceCommons.ApiKey.csproj", "{043F0E81-6438-4DDE-9FEB-33F8AB03C9C5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceCommons.OpenTelemetry", "ServiceCommons.OpenTelemetry\ServiceCommons.OpenTelemetry.csproj", "{CACB4BFD-B705-4FC6-AF4A-12C2D2275BE5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{043F0E81-6438-4DDE-9FEB-33F8AB03C9C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{043F0E81-6438-4DDE-9FEB-33F8AB03C9C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{043F0E81-6438-4DDE-9FEB-33F8AB03C9C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CACB4BFD-B705-4FC6-AF4A-12C2D2275BE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CACB4BFD-B705-4FC6-AF4A-12C2D2275BE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CACB4BFD-B705-4FC6-AF4A-12C2D2275BE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CACB4BFD-B705-4FC6-AF4A-12C2D2275BE5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

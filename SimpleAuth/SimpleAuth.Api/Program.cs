@@ -1,11 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using ServiceCommons.ApiKey;
+using ServiceCommons.OpenTelemetry;
 using SimpleAuth.Api.Data;
 using SimpleAuth.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddAspNetTelemetry(builder.Configuration);
 builder.Services.AddInternalApiKeyAuthentication(builder.Configuration);
 builder.Services.AddAuthorization();
 

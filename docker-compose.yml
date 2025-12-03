@@ -115,6 +115,26 @@ services:
     networks:
       - ledger-net
 
+    # open-telemetry-collector:
+    #   image: otel/opentelemetry-collector-contrib:0.130.1
+    #   containar_name: open-telemetry-collector
+    #   restart: unless-stopped
+    #   ports:
+    #     - "4317:4317"
+    #     - "4318:4318"
+    #   volumes:
+    #     - ./open-telemetry/config.yaml:/etc/otelcol-contrib/config.yaml
+    #   networks:
+    #     - ledger-net
+
+    # signoz:
+    #   image: signoz/signoz:latest
+    #   containar_name: signoz
+    #   restart: unless-stopped
+    #   ports:
+    #   networks:
+    #     - ledger-net
+
 volumes:
   user-data:
 

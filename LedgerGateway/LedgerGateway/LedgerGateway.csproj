@@ -15,7 +15,7 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.6"/>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.6" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
         <PackageReference Include="NSwag.MSBuild" Version="14.6.3">
           <PrivateAssets>all</PrivateAssets>
@@ -38,6 +38,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\ServiceCommons\ServiceCommons.ApiKey\ServiceCommons.ApiKey.csproj" />
+      <ProjectReference Include="..\..\ServiceCommons\ServiceCommons.OpenTelemetry\ServiceCommons.OpenTelemetry.csproj" />
       <ProjectReference Include="..\..\ServiceCommons\ServiceCommons\ServiceCommons.csproj" />
     </ItemGroup>
 

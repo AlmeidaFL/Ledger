@@ -3,11 +3,13 @@ using Microsoft.OpenApi.Models;
 using UserApi.Repository;
 using UserApi.Services;
 using ServiceCommons.ApiKey;
+using ServiceCommons.OpenTelemetry;
 using UserApi.Application.Handlers;
 using UserApi.Messaging;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddAspNetTelemetry(builder.Configuration);
 builder.Services.Configure<KafkaFinancialAccountCreatedSettings>(
     builder.Configuration.GetSection("Kafka:FinancialAccountCreatedConsumer"));
 

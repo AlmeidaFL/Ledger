@@ -1,11 +1,11 @@
-// using LedgerGateway.RestClients;
-
 using LedgerGateway.RestClients.UserApi;
 using Microsoft.OpenApi.Models;
 using ServiceCommons.ApiKey;
+using ServiceCommons.OpenTelemetry;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddAspNetTelemetry(builder.Configuration);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -28,6 +28,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "LedgerGateway v1"); });
 }
 
+app.UseRouting();
+app.MapControllers();
 app.Run();
 return;
 

@@ -4,9 +4,11 @@ using FinancialService.Messaging;
 using FinancialService.Repository;
 using Microsoft.EntityFrameworkCore;
 using ServiceCommons.ApiKey;
+using ServiceCommons.OpenTelemetry;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddAspNetTelemetry(builder.Configuration);
 builder.Services.Configure<KafkaUserCreatedConsumerSettings>(
     builder.Configuration.GetSection("Kafka:UserCreatedConsumer"));
 

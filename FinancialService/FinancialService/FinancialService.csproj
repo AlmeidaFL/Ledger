@@ -31,6 +31,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\ServiceCommons\ServiceCommons.ApiKey\ServiceCommons.ApiKey.csproj" />
+      <ProjectReference Include="..\..\ServiceCommons\ServiceCommons.OpenTelemetry\ServiceCommons.OpenTelemetry.csproj" />
       <ProjectReference Include="..\..\ServiceCommons\ServiceCommons\ServiceCommons.csproj" />
     </ItemGroup>
 
