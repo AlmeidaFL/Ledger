@@ -12,6 +12,8 @@ builder.Services.Configure<KafkaFinancialAccountCreatedSettings>(
     builder.Configuration.GetSection("Kafka:FinancialAccountCreatedConsumer"));
 
 builder.Services.AddInternalApiKeyAuthentication(builder.Configuration);
+builder.Services.AddAuthorization();
+
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IFinancialAccountCreatedHandler, FinancialAccountCreatedHandler>();
@@ -37,17 +39,17 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// app.UseAuthentication();
-// app.UseAuthorization();
-
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "UserApi v1");
-    });
+    app.UseSwaggerUI();
 }
 
+app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapControllers();
+
 app.Run();

@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleAuth.Api", "SimpleAut
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceCommons", "..\ServiceCommons\ServiceCommons\ServiceCommons.csproj", "{7D6D2AC8-3103-457D-9555-5D8C4FAF3360}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceCommons.ApiKey", "..\ServiceCommons\ServiceCommons.ApiKey\ServiceCommons.ApiKey.csproj", "{1ADB9B95-4D33-4918-AF59-E9741E9F36A7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,18 @@ Global
 		{7D6D2AC8-3103-457D-9555-5D8C4FAF3360}.Release|x64.Build.0 = Release|Any CPU
 		{7D6D2AC8-3103-457D-9555-5D8C4FAF3360}.Release|x86.ActiveCfg = Release|Any CPU
 		{7D6D2AC8-3103-457D-9555-5D8C4FAF3360}.Release|x86.Build.0 = Release|Any CPU
+		{1ADB9B95-4D33-4918-AF59-E9741E9F36A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1ADB9B95-4D33-4918-AF59-E9741E9F36A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1ADB9B95-4D33-4918-AF59-E9741E9F36A7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1ADB9B95-4D33-4918-AF59-E9741E9F36A7}.Debug|x64.Build.0 = Debug|Any CPU
+		{1ADB9B95-4D33-4918-AF59-E9741E9F36A7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1ADB9B95-4D33-4918-AF59-E9741E9F36A7}.Debug|x86.Build.0 = Debug|Any CPU
+		{1ADB9B95-4D33-4918-AF59-E9741E9F36A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1ADB9B95-4D33-4918-AF59-E9741E9F36A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1ADB9B95-4D33-4918-AF59-E9741E9F36A7}.Release|x64.ActiveCfg = Release|Any CPU
+		{1ADB9B95-4D33-4918-AF59-E9741E9F36A7}.Release|x64.Build.0 = Release|Any CPU
+		{1ADB9B95-4D33-4918-AF59-E9741E9F36A7}.Release|x86.ActiveCfg = Release|Any CPU
+		{1ADB9B95-4D33-4918-AF59-E9741E9F36A7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -6,6 +6,7 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
 COPY ServiceCommons/ServiceCommons/ServiceCommons.csproj ServiceCommons/ServiceCommons/
+COPY ServiceCommons/ServiceCommons.ApiKey/ServiceCommons.ApiKey.csproj ServiceCommons/ServiceCommons.ApiKey/
 COPY FinancialService/FinancialService/FinancialService.csproj FinancialService/FinancialService/
 
 RUN dotnet restore "FinancialService/FinancialService/FinancialService.csproj"

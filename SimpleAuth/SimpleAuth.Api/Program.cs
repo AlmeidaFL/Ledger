@@ -1,9 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
+using ServiceCommons.ApiKey;
 using SimpleAuth.Api.Data;
 using SimpleAuth.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddInternalApiKeyAuthentication(builder.Configuration);
+builder.Services.AddAuthorization();
 
 builder.Services.AddDbContext<AuthDbContext>(options =>
 {
@@ -71,13 +75,13 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "SimpleAuth v1");
-    });
+    app.UseSwaggerUI();
 }
 
 app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 
