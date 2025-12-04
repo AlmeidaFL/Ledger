@@ -7,3 +7,4 @@ riderModule.iml
 **/[Mm]igrations/
 **/launchSettings.json
 *.user
+/signoz/
