@@ -1,8 +1,13 @@
-﻿using Google.Apis.Auth;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Google.Apis.Auth;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using ServiceCommons;
-using SimpleAuth.Api.Data;
 using SimpleAuth.Api.Dtos;
+using SimpleAuth.Api.Model;
+using SimpleAuth.Api.Repository;
 
 namespace SimpleAuth.Api.Services;
 

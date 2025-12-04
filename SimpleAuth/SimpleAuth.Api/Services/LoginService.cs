@@ -1,7 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using ServiceCommons;
-using SimpleAuth.Api.Data;
 using SimpleAuth.Api.Dtos;
+using SimpleAuth.Api.Model;
+using SimpleAuth.Api.Repository;
 
 namespace SimpleAuth.Api.Services;
 
@@ -78,7 +81,7 @@ public class LoginService(
 
     public async Task<Result<Credentials>> Refresh(RefreshRequest request)
     {
-        var oldToken = await refreshTokenService.GetByToken(request.RefreshToken);
+        var oldToken = await refreshTokenService.GetSessionByToken(request.RefreshToken);
 
         if (oldToken == null)
         {

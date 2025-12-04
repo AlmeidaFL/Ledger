@@ -1,13 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using ServiceCommons;
-using SimpleAuth.Api.Data;
 using SimpleAuth.Api.Dtos;
+using SimpleAuth.Api.Repository;
 
 namespace SimpleAuth.Api.Services;
 
 public interface ITemporaryCodeService
 {
-    Task GenerateAndSendCode(Guid id);
+    Task GenerateAndSendCode(string email);
 
     public Task<Result<Credentials>>
         Login(string email, string code, UserAgentInfo userAgentInfo);
@@ -21,10 +24,10 @@ public class TemporaryCodeService(
     IRefreshTokenService refreshTokenService,
     IJwtService jwtService) : ITemporaryCodeService
 {
-    public async Task GenerateAndSendCode(Guid id)
+    public async Task GenerateAndSendCode(string email)
     {
         var user = await db.Users
-            .FirstOrDefaultAsync(u => u.Id == id);
+            .FirstOrDefaultAsync(u => u.Email == email);
 
         if (user == null)
         {
@@ -68,7 +71,7 @@ public class TemporaryCodeService(
         
         await loginAttemptService.Register(email, userAgentInfo.IpAddress, true);
         
-        user.TemporaryPasswordExpiresAt = DateTimeOffset.MinValue;
+        user.TemporaryPasswordExpiresAt = DateTime.MinValue;
         user.TemporaryPasswordHash = null;
 
         try

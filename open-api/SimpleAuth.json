@@ -51,7 +51,24 @@
             }
           },
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -272,19 +289,17 @@
         }
       }
     },
-    "/auth/logout/{id}": {
+    "/auth/logout": {
       "post": {
         "tags": [
           "Auth"
         ],
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
+            "name": "email",
+            "in": "query",
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "type": "string"
             }
           }
         ],
@@ -314,19 +329,17 @@
         }
       }
     },
-    "/auth/logout-all/{id}": {
+    "/auth/logout-all": {
       "post": {
         "tags": [
           "Auth"
         ],
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
+            "name": "email",
+            "in": "query",
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "type": "string"
             }
           }
         ],
@@ -357,19 +370,17 @@
         }
       }
     },
-    "/auth/request-temp-code/{id}": {
+    "/auth/request-temp-code": {
       "post": {
         "tags": [
           "Auth"
         ],
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
+            "name": "email",
+            "in": "query",
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "type": "string"
             }
           }
         ],
@@ -687,6 +698,10 @@
           "password": {
             "type": "string",
             "nullable": true
+          },
+          "fullname": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -735,6 +750,32 @@
           "clientType": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "googleId": {
+            "type": "string",
+            "nullable": true
+          },
+          "isGoogleUser": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "temporaryPasswordExpiresAt": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "additionalProperties": false

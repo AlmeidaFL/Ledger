@@ -17,7 +17,8 @@
       "generateBaseUrlProperty": false,
       "generateClientInterfaces": false,
       "injectHttpClient": true,
-      "disposeHttpClient": false
+      "disposeHttpClient": false,
+      "alwaysOverwriteFiles": true
     }
   }
 }

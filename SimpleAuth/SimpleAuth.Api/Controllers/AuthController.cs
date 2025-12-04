@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ServiceCommons;
+using SimpleAuth.Api.Converters;
 using SimpleAuth.Api.Dtos;
 using SimpleAuth.Api.Services;
 using RegisterRequest = SimpleAuth.Api.Dtos.RegisterRequest;
@@ -17,11 +20,11 @@ public class AuthController(
 {
     [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserResponse))]
     public async Task<ActionResult> Register([FromBody] RegisterRequest registerRequest)
     {
         var result = await loginService.Register(registerRequest);
-        return this.FromResult(result);
+        return this.FromResult(Result<UserResponse>.Combine(result, UserResponseConverter.Convert));
     }
 
     [HttpPost("login")]
@@ -49,7 +52,7 @@ public class AuthController(
 
     // [Authorize]
     // [HttpGet("sessions/{id:guid}")]
-    // public async Task<IActionResult> GetSessions(Guid id)
+    // public async Task<IActionResult> GetSessions(string email)
     // {
     //     var sessions = await db.RefreshTokens
     //         .Where(x => x.UserId == id && !x.Revoked && x.ExpiresAt > DateTime.UtcNow)
@@ -73,30 +76,30 @@ public class AuthController(
     // }
 
     [Authorize]
-    [HttpPost("logout/{id:guid}")]
+    [HttpPost("logout")]
     [ProducesResponseType(StatusCodes.Status200OK)]
 
-    public async Task<ActionResult> Logout(Guid id, [FromBody] LogoutRequest request)
+    public async Task<ActionResult> Logout([FromQuery] string email, [FromBody] LogoutRequest request)
     {
-        await refreshTokenService.RevokeToken(id, request.RefreshToken);
+        await refreshTokenService.RevokeToken(email, request.RefreshToken);
         return Ok();
     }
     
     [Authorize]
-    [HttpPost("logout-all/{id:guid}")]
+    [HttpPost("logout-all")]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult> LogoutAll(Guid id)
+    public async Task<ActionResult> LogoutAll([FromQuery] string email)
     {
-        await refreshTokenService.RevokeAllTokens(id);
+        await refreshTokenService.RevokeAllTokens(email);
         return Ok();
     }
 
-    [HttpPost("request-temp-code/{id:guid}")]
+    [HttpPost("request-temp-code")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TemporaryCodeResponse))]
-    public async Task<ActionResult> RequestTemporaryCode(Guid id)
+    public async Task<ActionResult> RequestTemporaryCode([FromQuery] string email)
     {
-        await temporaryCodeService.GenerateAndSendCode(id);
+        await temporaryCodeService.GenerateAndSendCode(email);
         return Ok(new TemporaryCodeResponse("If this email exists an code was sent to it"));
     }
     

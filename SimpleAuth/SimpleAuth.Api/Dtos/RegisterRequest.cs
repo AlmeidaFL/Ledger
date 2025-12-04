@@ -1,3 +1,3 @@
 ﻿namespace SimpleAuth.Api.Dtos;
 
-public record RegisterRequest(string Email, string Password);
+public record RegisterRequest(string Email, string Password, string Fullname);

@@ -1,5 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SimpleAuth.Api.Data;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using SimpleAuth.Api.Model;
+using SimpleAuth.Api.Repository;
 
 namespace SimpleAuth.Api.Services;
 

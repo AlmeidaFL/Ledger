@@ -1,10 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
 
-namespace SimpleAuth.Api.Data;
+namespace SimpleAuth.Api.Model;
 
 public class RefreshToken
 {
-    public byte[] RowVersion { get; set; }
+    public uint RowVersion { get; set; }
     public Guid Id { get; set; }
     public Guid UserId { get; set; }
     public User User { get; set; }

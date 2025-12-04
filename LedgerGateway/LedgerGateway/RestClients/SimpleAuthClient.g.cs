@@ -58,7 +58,7 @@ namespace LedgerGateway.RestClients.SimpleAuth
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task RegisterAsync(RegisterRequest body)
+        public virtual System.Threading.Tasks.Task<UserResponse> RegisterAsync(RegisterRequest body)
         {
             return RegisterAsync(body, System.Threading.CancellationToken.None);
         }
@@ -66,7 +66,7 @@ namespace LedgerGateway.RestClients.SimpleAuth
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task RegisterAsync(RegisterRequest body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<UserResponse> RegisterAsync(RegisterRequest body, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -79,6 +79,7 @@ namespace LedgerGateway.RestClients.SimpleAuth
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
@@ -110,7 +111,12 @@ namespace LedgerGateway.RestClients.SimpleAuth
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            return;
+                            var objectResponse_ = await ReadObjectResponseAsync<UserResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
                         }
                         else
                         if (status_ == 409)
@@ -368,19 +374,16 @@ namespace LedgerGateway.RestClients.SimpleAuth
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task LogoutAsync(System.Guid id, LogoutRequest body)
+        public virtual System.Threading.Tasks.Task LogoutAsync(string email, LogoutRequest body)
         {
-            return LogoutAsync(id, body, System.Threading.CancellationToken.None);
+            return LogoutAsync(email, body, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task LogoutAsync(System.Guid id, LogoutRequest body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task LogoutAsync(string email, LogoutRequest body, System.Threading.CancellationToken cancellationToken)
         {
-            if (id == null)
-                throw new System.ArgumentNullException("id");
-
             var client_ = _httpClient;
             var disposeClient_ = false;
             try
@@ -395,9 +398,14 @@ namespace LedgerGateway.RestClients.SimpleAuth
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "auth/logout/{id}"
-                    urlBuilder_.Append("auth/logout/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
+                    // Operation Path: "auth/logout"
+                    urlBuilder_.Append("auth/logout");
+                    urlBuilder_.Append('?');
+                    if (email != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("email")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(email, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -448,19 +456,16 @@ namespace LedgerGateway.RestClients.SimpleAuth
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task LogoutAllAsync(System.Guid id)
+        public virtual System.Threading.Tasks.Task LogoutAllAsync(string email)
         {
-            return LogoutAllAsync(id, System.Threading.CancellationToken.None);
+            return LogoutAllAsync(email, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task LogoutAllAsync(System.Guid id, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task LogoutAllAsync(string email, System.Threading.CancellationToken cancellationToken)
         {
-            if (id == null)
-                throw new System.ArgumentNullException("id");
-
             var client_ = _httpClient;
             var disposeClient_ = false;
             try
@@ -472,9 +477,14 @@ namespace LedgerGateway.RestClients.SimpleAuth
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "auth/logout-all/{id}"
-                    urlBuilder_.Append("auth/logout-all/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
+                    // Operation Path: "auth/logout-all"
+                    urlBuilder_.Append("auth/logout-all");
+                    urlBuilder_.Append('?');
+                    if (email != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("email")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(email, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -535,19 +545,16 @@ namespace LedgerGateway.RestClients.SimpleAuth
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<TemporaryCodeResponse> RequestTempCodeAsync(System.Guid id)
+        public virtual System.Threading.Tasks.Task<TemporaryCodeResponse> RequestTempCodeAsync(string email)
         {
-            return RequestTempCodeAsync(id, System.Threading.CancellationToken.None);
+            return RequestTempCodeAsync(email, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<TemporaryCodeResponse> RequestTempCodeAsync(System.Guid id, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<TemporaryCodeResponse> RequestTempCodeAsync(string email, System.Threading.CancellationToken cancellationToken)
         {
-            if (id == null)
-                throw new System.ArgumentNullException("id");
-
             var client_ = _httpClient;
             var disposeClient_ = false;
             try
@@ -560,9 +567,14 @@ namespace LedgerGateway.RestClients.SimpleAuth
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "auth/request-temp-code/{id}"
-                    urlBuilder_.Append("auth/request-temp-code/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
+                    // Operation Path: "auth/request-temp-code"
+                    urlBuilder_.Append("auth/request-temp-code");
+                    urlBuilder_.Append('?');
+                    if (email != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("email")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(email, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -1061,6 +1073,9 @@ namespace LedgerGateway.RestClients.SimpleAuth
         [Newtonsoft.Json.JsonProperty("password", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Password { get; set; }
 
+        [Newtonsoft.Json.JsonProperty("fullname", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Fullname { get; set; }
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.6.3.0 (NJsonSchema v11.5.2.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -1099,6 +1114,27 @@ namespace LedgerGateway.RestClients.SimpleAuth
 
         [Newtonsoft.Json.JsonProperty("clientType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string ClientType { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.6.3.0 (NJsonSchema v11.5.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class UserResponse
+    {
+
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid Id { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("googleId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string GoogleId { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("isGoogleUser", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsGoogleUser { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("email", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Email { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("temporaryPasswordExpiresAt", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset TemporaryPasswordExpiresAt { get; set; }
 
     }
 

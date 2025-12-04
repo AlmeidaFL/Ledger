@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SimpleAuth.Api.Model;
 
-namespace SimpleAuth.Api.Data;
+namespace SimpleAuth.Api.Repository;
 
 public class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbContext(options)
 {

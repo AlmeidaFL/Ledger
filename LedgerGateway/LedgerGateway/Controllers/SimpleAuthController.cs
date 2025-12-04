@@ -1,4 +1,7 @@
-﻿using LedgerGateway.RestClients.SimpleAuth;
+﻿using LedgerGateway.Application;
+using LedgerGateway.Dtos;
+using LedgerGateway.Integration;
+using LedgerGateway.RestClients.SimpleAuth;
 
 namespace LedgerGateway.Controllers;
 using Microsoft.AspNetCore.Mvc;
@@ -7,16 +10,18 @@ using System.Threading;
 using System.Threading.Tasks;
 
 [ApiController]
-[Route("api/simple-auth")]
-public class SimpleAuthController(SimpleAuthClient client) : ControllerBase
+[Route("api/auth")]
+public class SimpleAuthController(
+    SimpleAuthClient client,
+    IUserAgentParser userAgentParser) : ControllerBase
 {
     [HttpPost("register")]
     public async Task<ActionResult> Register(
-        [FromBody] RegisterRequest request,
+        [FromBody] RegisterRequestDto request,
         CancellationToken ct = default)
     {
         var result = await RestSafeCaller.Call(() =>
-            client.RegisterAsync(request, ct)
+            client.RegisterAsync(request.ToRegisterRequest(), ct)
         );
 
         return this.FromResult(result);
@@ -24,11 +29,15 @@ public class SimpleAuthController(SimpleAuthClient client) : ControllerBase
 
     [HttpPost("login")]
     public async Task<ActionResult> Login(
-        [FromBody] LoginRequest request,
+        [FromBody] LoginRequestDto dto,
         CancellationToken ct = default)
     {
+        var userAgentInfo = GetUserAgentInfoDto().ToUserAgentInfo();
+        var loginRequest = dto.Convert();
+        loginRequest.UserAgentInfo = userAgentInfo;
+        
         var result = await RestSafeCaller.Call(() =>
-            client.LoginAsync(request, ct)
+            client.LoginAsync(loginRequest, ct)
         );
 
         return this.FromResult(result);
@@ -36,9 +45,11 @@ public class SimpleAuthController(SimpleAuthClient client) : ControllerBase
 
     [HttpPost("refresh")]
     public async Task<ActionResult> Refresh(
-        [FromBody] RefreshRequest request,
+        [FromBody] RefreshRequestDto dto,
         CancellationToken ct = default)
     {
+        var request = dto.Convert();
+        request.UserAgentInfo = GetUserAgentInfoDto().ToUserAgentInfo();
         var result = await RestSafeCaller.Call(() =>
             client.RefreshAsync(request, ct)
         );
@@ -46,64 +57,94 @@ public class SimpleAuthController(SimpleAuthClient client) : ControllerBase
         return this.FromResult(result);
     }
 
-    [HttpPost("logout/{id:guid}")]
+    [HttpPost("logout")]
     public async Task<ActionResult> Logout(
-        Guid id,
+        [FromQuery] string userEmail,
         [FromBody] LogoutRequest request,
         CancellationToken ct = default)
     {
         var result = await RestSafeCaller.Call(() =>
-            client.LogoutAsync(id, request, ct)
+            client.LogoutAsync(userEmail, request, ct)
         );
 
         return this.FromResult(result);
     }
 
-    [HttpPost("logout-all/{id:guid}")]
+    [HttpPost("logout-all")]
     public async Task<ActionResult> LogoutAll(
-        Guid id,
+        [FromQuery] string userEmail,
         CancellationToken ct = default)
     {
         var result = await RestSafeCaller.Call(() =>
-            client.LogoutAllAsync(id, ct)
+            client.LogoutAllAsync(userEmail, ct)
         );
 
         return this.FromResult(result);
     }
 
-    [HttpPost("request-temp-code/{id:guid}")]
-    public async Task<ActionResult> RequestTemporaryCode(
-        Guid id,
-        CancellationToken ct = default)
+    // [HttpPost("request-temp-code")]
+    // public async Task<ActionResult> RequestTemporaryCode(
+    //     string userEmail,
+    //     CancellationToken ct = default)
+    // {
+    //     var result = await RestSafeCaller.Call(() =>
+    //         client.RequestTempCodeAsync(userEmail, ct)
+    //     );
+    //
+    //     return this.FromResult(result);
+    // }
+    //
+    // [HttpPost("login-temp")]
+    // public async Task<ActionResult> LoginWithTemporaryCode(
+    //     [FromBody] LoginWithTemporaryCodeRequestDto dto,
+    //     CancellationToken ct = default)
+    // {
+    //     var request = dto.Convert();
+    //     request.UserAgentInfo = GetUserAgentInfoDto().ToUserAgentInfo();
+    //     var result = await RestSafeCaller.Call(() =>
+    //         client.LoginTempAsync(request, ct)
+    //     );
+    //
+    //     return this.FromResult(result);
+    // }
+    //
+    // [HttpPost("google")]
+    // public async Task<ActionResult> GoogleLogin(
+    //     [FromBody] GoogleLoginRequestDto dto,
+    //     CancellationToken ct = default)
+    // {
+    //     var request = dto.Convert();
+    //     request.UserAgentInfo = GetUserAgentInfoDto().ToUserAgentInfo();
+    //     var result = await RestSafeCaller.Call(() =>
+    //         client.GoogleAsync(request, ct)
+    //     );
+    //
+    //     return this.FromResult(result);
+    // }
+    //
+    private UserAgentInfoDto GetUserAgentInfoDto()
     {
-        var result = await RestSafeCaller.Call(() =>
-            client.RequestTempCodeAsync(id, ct)
-        );
+        var httpContext = HttpContext;
 
-        return this.FromResult(result);
-    }
+        var ip =
+            httpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault()
+            ?? httpContext.Connection.RemoteIpAddress?.ToString()
+            ?? string.Empty;
 
-    [HttpPost("login-temp")]
-    public async Task<ActionResult> LoginWithTemporaryCode(
-        [FromBody] LoginWithTemporaryCodeRequest request,
-        CancellationToken ct = default)
-    {
-        var result = await RestSafeCaller.Call(() =>
-            client.LoginTempAsync(request, ct)
-        );
+        var userAgent = httpContext.Request.Headers["User-Agent"].FirstOrDefault() ?? string.Empty;
 
-        return this.FromResult(result);
-    }
+        var parsed = userAgentParser.Parse(userAgent);
 
-    [HttpPost("google")]
-    public async Task<ActionResult> GoogleLogin(
-        [FromBody] GoogleLoginRequest request,
-        CancellationToken ct = default)
-    {
-        var result = await RestSafeCaller.Call(() =>
-            client.GoogleAsync(request, ct)
-        );
-
-        return this.FromResult(result);
+        return new UserAgentInfoDto()
+        {
+            IpAddress = ip,
+            UserAgent = userAgent,
+            BrowserFamily = parsed.BrowserFamily,
+            BrowserVersion = parsed.BrowserVersion,
+            DeviceFamily = parsed.DeviceFamily,
+            DeviceBrand = parsed.DeviceBrand,
+            ClientName = parsed.ClientName,
+            ClientType = "Web"
+        };
     }
 }

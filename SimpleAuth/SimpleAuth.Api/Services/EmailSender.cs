@@ -1,4 +1,7 @@
-﻿namespace SimpleAuth.Api.Services;
+﻿using System;
+using System.Threading.Tasks;
+
+namespace SimpleAuth.Api.Services;
 
 public interface IEmailSender
 {

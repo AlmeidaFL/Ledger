@@ -1,5 +1,6 @@
 using System.Text.Json;
 using LedgerGateway;
+using LedgerGateway.Application;
 using LedgerGateway.RestClients.SimpleAuth;
 using LedgerGateway.RestClients.UserApi;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -22,6 +23,7 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 builder.Services.AddScoped<ServicesHealthCheck>();
+builder.Services.AddSingleton<IUserAgentParser, UserAgentParser>();
 
 ConfigureClients(builder);
 

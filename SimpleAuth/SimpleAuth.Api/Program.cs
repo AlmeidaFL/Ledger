@@ -1,8 +1,12 @@
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi;
 using ServiceCommons.ApiKey;
 using ServiceCommons.OpenTelemetry;
-using SimpleAuth.Api.Data;
+using SimpleAuth.Api.Repository;
 using SimpleAuth.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);

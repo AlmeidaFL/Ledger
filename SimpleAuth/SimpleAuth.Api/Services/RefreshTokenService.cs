@@ -1,6 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using ServiceCommons;
-using SimpleAuth.Api.Data;
+using SimpleAuth.Api.Model;
+using SimpleAuth.Api.Repository;
 
 namespace SimpleAuth.Api.Services;
 
@@ -9,10 +13,10 @@ public interface IRefreshTokenService
     Task<RefreshToken> Create(
         Guid userId,
         UserAgentInfo userAgentInfo);
-    Task<RefreshToken?> GetByToken(string token);
+    Task<RefreshToken?> GetSessionByToken(string token);
     Task<Result<RefreshToken>> Rotate(RefreshToken oldToken, UserAgentInfo userAgentInfo);
-    Task<Result> RevokeToken(Guid userId, string token);
-    Task<Result> RevokeAllTokens(Guid userId);
+    Task<Result> RevokeToken(string userEmail, string token);
+    Task<Result> RevokeAllTokens(string userEmail);
 }
 
 public class RefreshTokenService(AuthDbContext dbContext): IRefreshTokenService
@@ -47,8 +51,8 @@ public class RefreshTokenService(AuthDbContext dbContext): IRefreshTokenService
         
         return refresh;
     }
-
-    public async Task<RefreshToken?> GetByToken(string token)
+    
+    public async Task<RefreshToken?> GetSessionByToken(string token)
     {
         return await dbContext.RefreshTokens
             .Include(r => r.User)
@@ -95,17 +99,17 @@ public class RefreshTokenService(AuthDbContext dbContext): IRefreshTokenService
         return Result<RefreshToken>.Success(newToken);
     }
     
-    public async Task<Result> RevokeToken(Guid userId, string token)
+    public async Task<Result> RevokeToken(string userEmail, string token)
     {
-        var session = await GetByToken(token);
+        var session = await GetSessionByToken(token);
         if (session == null)
         {
             return Result.Failure("Invalid token", ErrorType.NotFound);
         }
         
-        if (session.UserId != userId)
+        if (session.User.Email != userEmail)
         {
-            return Result.Failure("Invalid user id", ErrorType.NotFound);
+            return Result.Failure("Revoke issuer token is different from the user token", ErrorType.Unauthorized);
         }
         
         session.Revoked = true;
@@ -114,10 +118,11 @@ public class RefreshTokenService(AuthDbContext dbContext): IRefreshTokenService
         return Result.Success();
     }
 
-    public async Task<Result> RevokeAllTokens(Guid userId)
+    public async Task<Result> RevokeAllTokens(string userEmail)
     {
         await dbContext.RefreshTokens
-            .Where(r => r.UserId == userId && !r.Revoked)
+            .Include(r => r.User)
+            .Where(r => r.User.Email == userEmail && !r.Revoked)
             .ForEachAsync(r =>
             {
                 r.Revoked = true;

@@ -1,4 +1,6 @@
-﻿namespace SimpleAuth.Api.Data;
+﻿using System;
+
+namespace SimpleAuth.Api.Model;
 
 public class LoginAttempt
 {
