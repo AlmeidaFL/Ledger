@@ -14,55 +14,43 @@ public class UserController(IUserService userService) : ControllerBase
 {
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(UserResponse))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserResponse))]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request,
         CancellationToken cancelationToken = default)
     {
         var result = await userService.CreateUserAsync(request, cancelationToken);
 
-        return result.IsFailure
-            ? this.FromResult(result)
-            : CreatedAtAction(nameof(GetUser), new { userId = result.Value!.Id }, result.Value);
+        return this.FromResult(result);
     }
 
-    [HttpGet("{userId:guid}")]
+    [HttpGet("userEmail")]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(UserResponse))]
-    public async Task<IActionResult> GetUser(Guid userId, CancellationToken cancelationToken = default)
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserResponse))]
+    public async Task<IActionResult> GetUser(string userEmail, CancellationToken cancelationToken = default)
     {
-        var requestingUserId = GetRequestingUserId();
-        var result = await userService.GetUserAsync(userId, requestingUserId, cancelationToken);
+        var result = await userService.GetUserAsync(userEmail, cancelationToken);
         return this.FromResult(result);
     }
     
-    [HttpPut("{userId:guid}")]
+    [HttpPut("userEmail")]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(UserResponse))]
-    public async Task<IActionResult> UpdateUser(Guid userId, [FromBody] UpdateUserRequest request, CancellationToken cancellationToken)
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserResponse))]
+    public async Task<IActionResult> UpdateUser(string userEmail, [FromBody] UpdateUserRequest request, CancellationToken cancellationToken)
     {
-        var requestingUserId = GetRequestingUserId();
-        var result = await userService.UpdateUserAsync(userId, requestingUserId, request, cancellationToken);
+        var result = await userService.UpdateUserAsync(userEmail, request, cancellationToken);
 
         return this.FromResult(result);
     }
     
-    [HttpDelete("{userId:guid}")]
+    [HttpDelete("userEmail")]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeactivateUser(Guid userId, CancellationToken ct)
+    public async Task<IActionResult> DeactivateUser(string userEmail, CancellationToken ct)
     {
-        var requestingUserId = GetRequestingUserId();
+        var result = await userService.DeactivateUserAsync(userEmail, ct);
 
-        var result = await userService.DeactivateUserAsync(userId, requestingUserId, ct);
-
-        return result.IsFailure ? this.FromResult(result) : NoContent();
-    }
-    
-    private Guid GetRequestingUserId()
-    {
-        var header = HttpContext.Request.Headers["X-User-Id"].FirstOrDefault();
-        return Guid.TryParse(header, out var value) ? value : Guid.Empty;
+        return this.FromResult(result);
     }
 }

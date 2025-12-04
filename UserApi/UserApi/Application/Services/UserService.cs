@@ -15,19 +15,16 @@ public interface IUserService
     Task<Result<UserResponse>> CreateUserAsync(CreateUserRequest request, CancellationToken cancellationToken = default);
 
     Task<Result<UserResponse>> GetUserAsync(
-        Guid userId,
-        Guid requestingUsedId,
+        string email,
         CancellationToken cancellationToken = default);
 
     Task<Result<UserResponse>> UpdateUserAsync(
-        Guid userId,
-        Guid requestingUserId,
+        string email,
         UpdateUserRequest request,
         CancellationToken cancellationToken = default);
     
     Task<Result> DeactivateUserAsync(
-        Guid userId,
-        Guid requestingUserId,
+        string email,
         CancellationToken cancellationToken = default);
 }
 
@@ -99,33 +96,19 @@ public class UserService(
         return Result<UserResponse>.Success(UserConverter.ToResponse(user));
     }
 
-    public async Task<Result<UserResponse>> GetUserAsync(Guid userId, Guid requestingUsedId, CancellationToken cancellationToken = default)
+    public async Task<Result<UserResponse>> GetUserAsync(string email, CancellationToken cancellationToken = default)
     {
-        if (!OwnershipUtils.HasOwnership(userId, requestingUsedId))
-        {
-            return Result<UserResponse>.Failure("User does not own this user", ErrorType.Forbidden);
-        }
-        
-        var user = await db.Users
-            .AsNoTracking()
-            .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
+        var user = await GetUserByEmail(email, cancellationToken);
 
         return user == null ? 
             Result<UserResponse>.Failure("User not found", ErrorType.NotFound) 
             : Result<UserResponse>.Success(UserConverter.ToResponse(user));
     }
 
-    public async Task<Result<UserResponse>> UpdateUserAsync(Guid userId, Guid requestingUserId, UpdateUserRequest request,
+    public async Task<Result<UserResponse>> UpdateUserAsync(string email, UpdateUserRequest request,
         CancellationToken cancellationToken = default)
     {
-        var hasOwnership = OwnershipUtils.HasOwnership(userId, requestingUserId);
-
-        if (!hasOwnership)
-        {
-            return Result<UserResponse>.Failure("User does not own this user", ErrorType.Forbidden);
-        }
-        
-        var user = await GetUserById(userId, cancellationToken);
+        var user = await GetUserByEmail(email, cancellationToken);
 
         if (user == null)
         {
@@ -140,30 +123,24 @@ public class UserService(
         return Result<UserResponse>.Success(UserConverter.ToResponse(user));
     }
 
-    public async Task<Result> DeactivateUserAsync(Guid userId, Guid requestingUserId, CancellationToken cancellationToken = default)
+    public async Task<Result> DeactivateUserAsync(string email, CancellationToken cancellationToken = default)
     {
-        var hasOwnership = OwnershipUtils.HasOwnership(userId, requestingUserId);
-        if (!hasOwnership)
-        {
-            return Result<UserResponse>.Failure("User does not own this user", ErrorType.Forbidden);
-        }
-        
-        var user = await GetUserById(userId, cancellationToken);
+        var user = await GetUserByEmail(email, cancellationToken);
         if (user == null)
         {
             return Result<UserResponse>.Failure("User not found", ErrorType.NotFound);
         }
         
-        user.IsActive = false;
+        user.IsDeleted = true;
         await db.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
     }
     
-    private async Task<User?> GetUserById(Guid userId, CancellationToken cancellationToken)
+    private async Task<User?> GetUserByEmail(string email, CancellationToken cancellationToken)
     {
         var user = await db.Users
-            .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
+            .FirstOrDefaultAsync(u => u.Email == email && !u.IsDeleted, cancellationToken);
         return user;
     }
 }

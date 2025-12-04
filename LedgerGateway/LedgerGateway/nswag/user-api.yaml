@@ -7,7 +7,7 @@ paths:
     post:
       tags:
       - User
-      operationId: userPOST
+      operationId: user
       requestBody:
         content:
           application/json:
@@ -32,8 +32,8 @@ paths:
             text/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
-        201:
-          description: Created
+        200:
+          description: OK
           content:
             text/plain:
               schema:
@@ -44,18 +44,16 @@ paths:
             text/json:
               schema:
                 $ref: '#/components/schemas/UserResponse'
-  /user/{userId}:
+  /user/userEmail:
     get:
       tags:
       - User
-      operationId: userGET
+      operationId: userEmailGET
       parameters:
-      - name: userId
-        in: path
-        required: true
+      - name: userEmail
+        in: query
         schema:
           type: string
-          format: uuid
       responses:
         403:
           description: Forbidden
@@ -81,8 +79,8 @@ paths:
             text/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
-        201:
-          description: Created
+        200:
+          description: OK
           content:
             text/plain:
               schema:
@@ -96,14 +94,12 @@ paths:
     put:
       tags:
       - User
-      operationId: userPUT
+      operationId: userEmailPUT
       parameters:
-      - name: userId
-        in: path
-        required: true
+      - name: userEmail
+        in: query
         schema:
           type: string
-          format: uuid
       requestBody:
         content:
           application/json:
@@ -140,8 +136,8 @@ paths:
             text/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
-        201:
-          description: Created
+        200:
+          description: OK
           content:
             text/plain:
               schema:
@@ -155,14 +151,12 @@ paths:
     delete:
       tags:
       - User
-      operationId: userDELETE
+      operationId: userEmailDELETE
       parameters:
-      - name: userId
-        in: path
-        required: true
+      - name: userEmail
+        in: query
         schema:
           type: string
-          format: uuid
       responses:
         403:
           description: Forbidden

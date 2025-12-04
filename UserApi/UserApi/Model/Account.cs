@@ -14,7 +14,7 @@ public class Account
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     
-    public byte[] RowVersion { get; set; }
+    public uint RowVersion { get; set; }
 }
 
 public enum AccountStatus

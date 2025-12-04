@@ -12,37 +12,37 @@ public class UserApiController(UserApiClient client) : ControllerBase
     public async Task<ActionResult> CreateUser(CreateUserRequest createUserRequest, CancellationToken cancellationToken = default)
     {
         var result = await RestSafeCaller.Call(() =>
-            client.UserPOSTAsync(createUserRequest, cancellationToken)
+            client.UserAsync(createUserRequest, cancellationToken)
         );
 
         return this.FromResult(result);
     }
     
-    [HttpGet("{userId:guid}")]
-    public async Task<ActionResult> GetUser(Guid userId, CancellationToken ct)
+    [HttpGet("userEmail")]
+    public async Task<ActionResult> GetUser(string userEmail, CancellationToken ct)
     {
         var result = await RestSafeCaller.Call(() =>
-            client.UserGETAsync(userId, ct)
+            client.UserEmailGETAsync(userEmail, ct)
         );
 
         return this.FromResult(result);
     }
     
-    [HttpPut("{userId:guid}")]
-    public async Task<ActionResult> UpdateUser(Guid userId, [FromBody] UpdateUserRequest request, CancellationToken ct = default)
+    [HttpPut("userEmail")]
+    public async Task<ActionResult> UpdateUser(string userEmail, [FromBody] UpdateUserRequest request, CancellationToken ct = default)
     {
         var result = await RestSafeCaller.Call(() =>
-            client.UserPUTAsync(userId, request, ct)
+            client.UserEmailPUTAsync(userEmail, request, ct)
         );
 
         return this.FromResult(result);
     }
     
-    [HttpDelete("{userId:guid}")]
-    public async Task<ActionResult> Delete(Guid userId, CancellationToken ct = default)
+    [HttpDelete("userEmail")]
+    public async Task<ActionResult> Delete(string userEmail, CancellationToken ct = default)
     {
         var result = await RestSafeCaller.Call(() =>
-            client.UserDELETEAsync(userId, ct)
+            client.UserEmailDELETEAsync(userEmail, ct)
         );
 
         return this.FromResult(result);

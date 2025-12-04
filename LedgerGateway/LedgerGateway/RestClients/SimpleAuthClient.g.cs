@@ -27,19 +27,14 @@ namespace LedgerGateway.RestClients.SimpleAuth
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.6.3.0 (NJsonSchema v11.5.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class SimpleAuthClient 
     {
-        #pragma warning disable 8618
-        private string _baseUrl;
-        #pragma warning restore 8618
-
         private System.Net.Http.HttpClient _httpClient;
         private static System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings = new System.Lazy<Newtonsoft.Json.JsonSerializerSettings>(CreateSerializerSettings, true);
         private Newtonsoft.Json.JsonSerializerSettings _instanceSettings;
 
     #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        public SimpleAuthClient(string baseUrl, System.Net.Http.HttpClient httpClient)
+        public SimpleAuthClient(System.Net.Http.HttpClient httpClient)
     #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
-            BaseUrl = baseUrl;
             _httpClient = httpClient;
             Initialize();
         }
@@ -49,17 +44,6 @@ namespace LedgerGateway.RestClients.SimpleAuth
             var settings = new Newtonsoft.Json.JsonSerializerSettings();
             UpdateJsonSerializerSettings(settings);
             return settings;
-        }
-
-        public string BaseUrl
-        {
-            get { return _baseUrl; }
-            set
-            {
-                _baseUrl = value;
-                if (!string.IsNullOrEmpty(_baseUrl) && !_baseUrl.EndsWith("/"))
-                    _baseUrl += '/';
-            }
         }
 
         protected Newtonsoft.Json.JsonSerializerSettings JsonSerializerSettings { get { return _instanceSettings ?? _settings.Value; } }
@@ -97,7 +81,7 @@ namespace LedgerGateway.RestClients.SimpleAuth
                     request_.Method = new System.Net.Http.HttpMethod("POST");
 
                     var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                
                     // Operation Path: "auth/register"
                     urlBuilder_.Append("auth/register");
 
@@ -184,7 +168,7 @@ namespace LedgerGateway.RestClients.SimpleAuth
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                
                     // Operation Path: "auth/login"
                     urlBuilder_.Append("auth/login");
 
@@ -296,7 +280,7 @@ namespace LedgerGateway.RestClients.SimpleAuth
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                
                     // Operation Path: "auth/refresh"
                     urlBuilder_.Append("auth/refresh");
 
@@ -410,7 +394,7 @@ namespace LedgerGateway.RestClients.SimpleAuth
                     request_.Method = new System.Net.Http.HttpMethod("POST");
 
                     var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                
                     // Operation Path: "auth/logout/{id}"
                     urlBuilder_.Append("auth/logout/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
@@ -487,7 +471,7 @@ namespace LedgerGateway.RestClients.SimpleAuth
                     request_.Method = new System.Net.Http.HttpMethod("POST");
 
                     var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                
                     // Operation Path: "auth/logout-all/{id}"
                     urlBuilder_.Append("auth/logout-all/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
@@ -575,7 +559,7 @@ namespace LedgerGateway.RestClients.SimpleAuth
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                
                     // Operation Path: "auth/request-temp-code/{id}"
                     urlBuilder_.Append("auth/request-temp-code/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
@@ -658,7 +642,7 @@ namespace LedgerGateway.RestClients.SimpleAuth
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                
                     // Operation Path: "auth/login-temp"
                     urlBuilder_.Append("auth/login-temp");
 
@@ -750,7 +734,7 @@ namespace LedgerGateway.RestClients.SimpleAuth
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                
                     // Operation Path: "auth/google"
                     urlBuilder_.Append("auth/google");
 
