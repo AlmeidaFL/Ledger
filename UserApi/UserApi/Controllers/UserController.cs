@@ -23,31 +23,31 @@ public class UserController(IUserService userService) : ControllerBase
         return this.FromResult(result);
     }
 
-    [HttpGet("userEmail")]
+    [HttpGet]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserResponse))]
-    public async Task<IActionResult> GetUser(string userEmail, CancellationToken cancelationToken = default)
+    public async Task<IActionResult> GetUser([FromQuery] string userEmail, CancellationToken cancelationToken = default)
     {
         var result = await userService.GetUserAsync(userEmail, cancelationToken);
         return this.FromResult(result);
     }
     
-    [HttpPut("userEmail")]
+    [HttpPut]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserResponse))]
-    public async Task<IActionResult> UpdateUser(string userEmail, [FromBody] UpdateUserRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> UpdateUser([FromQuery] string userEmail, [FromBody] UpdateUserRequest request, CancellationToken cancellationToken)
     {
         var result = await userService.UpdateUserAsync(userEmail, request, cancellationToken);
 
         return this.FromResult(result);
     }
     
-    [HttpDelete("userEmail")]
+    [HttpDelete]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeactivateUser(string userEmail, CancellationToken ct)
+    public async Task<IActionResult> DeactivateUser([FromQuery] string userEmail, CancellationToken ct)
     {
         var result = await userService.DeactivateUserAsync(userEmail, ct);
 

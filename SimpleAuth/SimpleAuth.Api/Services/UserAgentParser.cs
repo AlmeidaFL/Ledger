@@ -1,6 +1,4 @@
-﻿using SimpleAuth.Api.Data;
-
-namespace SimpleAuth.Api.Services;
+﻿namespace SimpleAuth.Api.Services;
 
 public class UserAgentInfo
 {

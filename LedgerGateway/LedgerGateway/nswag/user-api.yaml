@@ -7,7 +7,7 @@ paths:
     post:
       tags:
       - User
-      operationId: user
+      operationId: userPOST
       requestBody:
         content:
           application/json:
@@ -44,11 +44,10 @@ paths:
             text/json:
               schema:
                 $ref: '#/components/schemas/UserResponse'
-  /user/userEmail:
     get:
       tags:
       - User
-      operationId: userEmailGET
+      operationId: userGET
       parameters:
       - name: userEmail
         in: query
@@ -94,7 +93,7 @@ paths:
     put:
       tags:
       - User
-      operationId: userEmailPUT
+      operationId: userPUT
       parameters:
       - name: userEmail
         in: query
@@ -151,7 +150,7 @@ paths:
     delete:
       tags:
       - User
-      operationId: userEmailDELETE
+      operationId: userDELETE
       parameters:
       - name: userEmail
         in: query

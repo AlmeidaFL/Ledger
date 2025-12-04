@@ -46,6 +46,13 @@ public class Result<T> : Result
     
     public new static Result<T> Failure<U>(Result<U> result)
         => new Result<T>(false, default, result.Error, result.ErrorType);
+
+    public static Result<U> Combine<T, U>(Result<T> result, Func<T, U> transform)
+    {
+        return result.IsFailure 
+            ? Result<U>.Failure(result.Error!, result.ErrorType)
+            : Result<U>.Success(transform(result.Value!));
+    }
 }
 
 public enum ErrorType

@@ -19,6 +19,7 @@
       "generateClientInterfaces": false,
       "injectHttpClient": true,
       "disposeHttpClient": false,
+      "alwaysOverwriteFiles": true
     }
   }
 }
