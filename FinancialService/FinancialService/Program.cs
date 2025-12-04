@@ -21,6 +21,8 @@ builder.Services.AddScoped<IDepositService, DepositService>();
 builder.Services.AddScoped<ITransferService, TransferService>();
 builder.Services.AddScoped<IAccountLockService, AccountLockService>();
 
+builder.Services.AddHealthChecks();
+
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<FinancialDbContext>(options =>
 {
@@ -32,6 +34,8 @@ builder.Services.AddDbContext<FinancialDbContext>(options =>
 builder.Services.AddGrpc();
 
 var app = builder.Build();
+
+app.MapHealthChecks("/health");
 
 app.UseAuthorization();
 app.UseAuthentication();

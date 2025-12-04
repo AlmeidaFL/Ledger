@@ -1,4 +1,7 @@
+using LedgerGateway;
 using LedgerGateway.RestClients.UserApi;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
 using ServiceCommons.ApiKey;
 using ServiceCommons.OpenTelemetry;
@@ -16,9 +19,13 @@ builder.Services.AddSwaggerGen(c =>
         Version = "v1",
     });
 });
-
+builder.Services.AddScoped<ServicesHealthCheck>();
 
 ConfigureClients(builder);
+
+builder.Services.AddHealthChecks()
+    .AddCheck("self", () => HealthCheckResult.Healthy(), tags: ["live"])
+    .AddCheck<ServicesHealthCheck>("external-apis", tags: ["ready"]);
 
 var app = builder.Build();
 
@@ -27,6 +34,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "LedgerGateway v1"); });
 }
+
+app.MapHealthChecks("/health/live", new HealthCheckOptions  
+{  
+    Predicate = check => check.Tags.Contains("live")  
+});  
+app.MapHealthChecks("/health/ready", new HealthCheckOptions  
+{  
+    Predicate = check => check.Tags.Contains("ready")  
+});
+app.MapHealthChecks("/health");
 
 app.UseRouting();
 app.MapControllers();

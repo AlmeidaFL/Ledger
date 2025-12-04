@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
 using UserApi.Repository;
 using UserApi.Services;
@@ -39,6 +41,10 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+builder.Services.AddHealthChecks()
+    .AddCheck("self", () => HealthCheckResult.Healthy(), tags: ["live"])
+    .AddDbContextCheck<UserDbContext>("ready", tags: ["ready"]);
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -46,6 +52,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.MapHealthChecks("/health/live", new HealthCheckOptions  
+{  
+    Predicate = check => check.Tags.Contains("live")  
+});  
+app.MapHealthChecks("/health/ready", new HealthCheckOptions  
+{  
+    Predicate = check => check.Tags.Contains("ready")  
+});
+app.MapHealthChecks("/health");
 
 app.UseRouting();
 

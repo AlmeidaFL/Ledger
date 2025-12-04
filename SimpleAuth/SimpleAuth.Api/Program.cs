@@ -36,6 +36,7 @@ builder.Services.AddSwaggerGen(c =>
         Version = "v1",
     });
 });
+builder.Services.AddHealthChecks();
 
 var key = builder.Configuration["Jwt:Key"];
 var issuer = builder.Configuration["Jwt:Issuer"];
@@ -79,6 +80,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseHealthChecks("/health");
 
 app.UseRouting();
 
