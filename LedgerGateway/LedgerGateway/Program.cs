@@ -1,4 +1,6 @@
+using System.Text.Json;
 using LedgerGateway;
+using LedgerGateway.RestClients.SimpleAuth;
 using LedgerGateway.RestClients.UserApi;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -43,7 +45,23 @@ app.MapHealthChecks("/health/ready", new HealthCheckOptions
 {  
     Predicate = check => check.Tags.Contains("ready")  
 });
-app.MapHealthChecks("/health");
+app.MapHealthChecks("/health", new HealthCheckOptions  
+{  
+    ResponseWriter = async (context, report) =>  
+    {  
+        context.Response.ContentType = "application/json";  
+        var json = JsonSerializer.Serialize(new   
+        {   
+            status = report.Status.ToString(), 
+            checks = report.Entries.Select(e => new {  
+                name = e.Key,  
+                status = e.Value.Status.ToString(),  
+                description = e.Value.Description  
+            })  
+        });  
+        await context.Response.WriteAsync(json);  
+    }  
+});
 
 app.UseRouting();
 app.MapControllers();
@@ -54,7 +72,7 @@ void ConfigureClients(WebApplicationBuilder webApplicationBuilder)
 {
     var integration = builder.Configuration.GetSection("Integration");
 
-    webApplicationBuilder.Services.AddHttpClient<UserApiClient>(client =>
+    webApplicationBuilder.Services.AddHttpClient<SimpleAuthClient>(client =>
     {
         client.BaseAddress = new Uri(GetOrThrow("SimpleAuth", "BaseUrl"));
     })

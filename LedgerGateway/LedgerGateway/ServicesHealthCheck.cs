@@ -38,8 +38,9 @@ public class ServicesHealthCheck(IConfiguration configuration) : IHealthCheck
     
     private string GetUrlOrThrow(string serviceName)
     {
-        var url = configuration.GetSection(serviceName).GetValue<string>("BaseUrl") 
-               ?? throw new InvalidOperationException($"{serviceName}.BaseUrl not configured.");
+        var section = configuration.GetSection("Integration");
+        var url = section.GetSection(serviceName).GetValue<string>("BaseUrl") 
+                  ?? throw new InvalidOperationException($"{serviceName}.BaseUrl not configured.");
         
         return $"{url}/health";        
     }

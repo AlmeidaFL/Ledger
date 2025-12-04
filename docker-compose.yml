@@ -23,12 +23,14 @@ services:
       context: .
       dockerfile: SimpleAuth/SimpleAuth.Api/Dockerfile
     environment:
+      OpenTelemetry__ExporterUrl: http://signoz-otel-collector:4317
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: "http://0.0.0.0:5001"
       ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=simpleauth;Username=postgres;Password=postgres"
     ports:
       - "5001:5001"
     networks:
+      - signoz-ledger-net
       - ledger-net
 
   user-api:
@@ -40,12 +42,14 @@ services:
       context: .
       dockerfile: UserApi/UserApi/Dockerfile
     environment:
+      OpenTelemetry__ExporterUrl: http://signoz-otel-collector:4317
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://0.0.0.0:5002
       ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=userdb;Username=postgres;Password=postgres"
     ports:
       - "5002:5002"
     networks:
+      - signoz-ledger-net
       - ledger-net
 
   financial-service:
@@ -57,13 +61,20 @@ services:
       context: .
       dockerfile: FinancialService/FinancialService/Dockerfile
     environment:
+      OpenTelemetry__ExporterUrl: http://signoz-otel-collector:4317
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://0.0.0.0:5003
       ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=financialservice;Username=postgres;Password=postgres"
     ports:
       - "5003:5003"
     networks:
+      - signoz-ledger-net
       - ledger-net
+
+
+    financial-service-migrations:
+      image: financial-service
+      entrypoint: ["dotnet", "FinancialService."]
 
   ledger-gateway:
     image: ledger-gateway
@@ -72,11 +83,13 @@ services:
       context: .
       dockerfile: LedgerGateway/LedgerGateway/Dockerfile
     environment:
+      OpenTelemetry__ExporterUrl: http://signoz-otel-collector:4317
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://0.0.0.0:5000
     ports:
       - "5000:5000"
     networks:
+      - signoz-ledger-net
       - ledger-net
 
   broker:
@@ -100,6 +113,7 @@ services:
     volumes:
       - ./Kafka/data/kafka:/var/lib/kafka/data
     networks:
+      - signoz-ledger-net
       - ledger-net
       
   kafka-ui:
@@ -108,7 +122,7 @@ services:
     depends_on:
       - broker
     ports:
-      - "8080:8080"
+      - "8081:8080"
     environment:
       KAFKA_CLUSTERS_0_NAME: "local"
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "broker:9092"
@@ -127,8 +141,8 @@ services:
     #   networks:
     #     - ledger-net
 
-    # signoz:
-    #   image: signoz/signoz:latest
+    # signoz-otel-collector:
+    #   image: signoz/signoz-otel-collector:latest
     #   containar_name: signoz
     #   restart: unless-stopped
     #   ports:
@@ -141,3 +155,5 @@ volumes:
 networks:
   ledger-net:
     driver: bridge
+  signoz-ledger-net:
+    external: true

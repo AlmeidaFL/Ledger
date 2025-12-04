@@ -13,7 +13,8 @@
       "exceptionClass": "ApiException",
       "namespace": "LedgerGateway.RestClients.SimpleAuth",
       "output": "../RestClients/SimpleAuthClient.g.cs",
-      "useBaseUrl": true,
+      "useBaseUrl": false,
+      "generateBaseUrlProperty": false,
       "generateClientInterfaces": false,
       "injectHttpClient": true,
       "disposeHttpClient": false
