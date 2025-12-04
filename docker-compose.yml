@@ -24,7 +24,7 @@ services:
     image: simple-auth
     container_name: simple-auth
     depends_on:
-      - postgres
+      - simple-auth-migrations
     build:
       context: .
       dockerfile: SimpleAuth/SimpleAuth.Api/Dockerfile
@@ -38,6 +38,17 @@ services:
     networks:
       - signoz-ledger-net
       - ledger-net
+
+  simple-auth-migrations:
+    image: simple-auth
+    entrypoint: ["dotnet", "SimpleAuth.MigrationsRunner.dll"]
+    environment:
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=simpleauth;Username=postgres;Password=postgres"
+    networks:
+      - ledger-net
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   user-api:
     image: user-api
@@ -57,6 +68,17 @@ services:
     networks:
       - signoz-ledger-net
       - ledger-net
+
+  user-api-migrations:
+    image: user-api
+    entrypoint: ["dotnet", "UserApi.MigrationsRunner.dll"]
+    environment:
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=userdb;Username=postgres;Password=postgres"
+    networks:
+      - ledger-net
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   financial-service:
     image: financial-service

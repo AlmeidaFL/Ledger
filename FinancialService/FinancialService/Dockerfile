@@ -17,7 +17,6 @@ RUN dotnet restore "FinancialService/FinancialService.MigrationsRunner/Financial
 
 COPY ServiceCommons/ ServiceCommons/
 COPY FinancialService/ FinancialService/
-COPY FinancialService/FinancialService.MigrationsRunner/ FinancialService/FinancialService.MigrationsRunner/
 
 WORKDIR /src/FinancialService/FinancialService
 RUN dotnet build "FinancialService.csproj" -c $BUILD_CONFIGURATION -o /app/build

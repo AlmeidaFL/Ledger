@@ -8,19 +8,25 @@ WORKDIR /src
 COPY ServiceCommons/ServiceCommons/ServiceCommons.csproj ServiceCommons/ServiceCommons/
 COPY ServiceCommons/ServiceCommons.ApiKey/ServiceCommons.ApiKey.csproj ServiceCommons/ServiceCommons.ApiKey/
 COPY ServiceCommons/ServiceCommons.OpenTelemetry/ServiceCommons.OpenTelemetry.csproj ServiceCommons/ServiceCommons.OpenTelemetry/
+
 COPY UserApi/UserApi/UserApi.csproj UserApi/UserApi/
+COPY UserApi/UserApi.MigrationsRunner/UserApi.MigrationsRunner.csproj UserApi/UserApi.MigrationsRunner/
 
 RUN dotnet restore "UserApi/UserApi/UserApi.csproj"
+RUN dotnet restore "UserApi/UserApi.MigrationsRunner/UserApi.MigrationsRunner.csproj"
 
 COPY ServiceCommons/ ServiceCommons/
 COPY UserApi/ UserApi/
 
 WORKDIR /src/UserApi/UserApi
-RUN echo "=== DEBUG STRUCTURE ===" && pwd && ls -R /src
 RUN dotnet build "UserApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
+WORKDIR /src/UserApi/UserApi.MigrationsRunner
+RUN dotnet build "UserApi.MigrationsRunner.csproj" -c $BUILD_CONFIGURATION -o /app/build
+
 FROM build AS publish
-RUN dotnet publish "UserApi.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "/src/UserApi/UserApi/UserApi.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "/src/UserApi/UserApi.MigrationsRunner/UserApi.MigrationsRunner.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app

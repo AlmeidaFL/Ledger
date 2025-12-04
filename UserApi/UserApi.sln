@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceCommons", "..\Servic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceCommons.OpenTelemetry", "..\ServiceCommons\ServiceCommons.OpenTelemetry\ServiceCommons.OpenTelemetry.csproj", "{E3F1FA10-F2DA-421F-81D6-1EE2258FA437}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserApi.MigrationsRunner", "UserApi.MigrationsRunner\UserApi.MigrationsRunner.csproj", "{2F923932-561D-4E00-AAA3-228CA22307DE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,5 +37,9 @@ Global
 		{E3F1FA10-F2DA-421F-81D6-1EE2258FA437}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E3F1FA10-F2DA-421F-81D6-1EE2258FA437}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E3F1FA10-F2DA-421F-81D6-1EE2258FA437}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F923932-561D-4E00-AAA3-228CA22307DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F923932-561D-4E00-AAA3-228CA22307DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F923932-561D-4E00-AAA3-228CA22307DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F923932-561D-4E00-AAA3-228CA22307DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
