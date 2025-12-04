@@ -3,6 +3,9 @@ Shield: [![CC BY-NC 4.0][cc-by-nc-shield]][cc-by-nc]
 This work is licensed under a
 [Creative Commons Attribution-NonCommercial 4.0 International License][cc-by-nc].
 
+This project uses third-party libraries under their own respective licenses.
+No modification of third-party licenses is intended.
+
 [![CC BY-NC 4.0][cc-by-nc-image]][cc-by-nc]
 
 [cc-by-nc]: https://creativecommons.org/licenses/by-nc/4.0/
