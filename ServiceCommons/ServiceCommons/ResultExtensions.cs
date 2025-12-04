@@ -20,7 +20,7 @@ public static class ResultExtensions
     {
         if (!result.IsSuccess) return controller.MapError(result);
         
-        if (result.Value is not null)
+        if (result.Value is null)
             return controller.NoContent();
         
         return controller.Ok(result.Value);
