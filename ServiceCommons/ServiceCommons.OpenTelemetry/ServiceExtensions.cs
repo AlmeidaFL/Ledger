@@ -23,8 +23,26 @@ public static class ServicesExtensions
                 resource.AddService(serviceName: serviceName))
             .UseOtlpExporter(OtlpExportProtocol.Grpc, new Uri(endpoint))
             .WithTracing(tracing => tracing
-                .AddHttpClientInstrumentation()
-                .AddAspNetCoreInstrumentation())
+                .AddHttpClientInstrumentation(options =>
+                {
+                    options.EnrichWithHttpResponseMessage = (activity, httpResponseMessage) =>
+                    {
+                        if (httpResponseMessage?.Content == null) return;
+                        var responseBody = httpResponseMessage.Content.ReadAsStringAsync().Result;  
+                        activity.SetTag("http.response.body", responseBody);
+                    };  
+                })
+                .AddAspNetCoreInstrumentation(options =>
+                {
+                    options.EnrichWithHttpResponse = (activity, httpResponse) =>
+                    {
+                        if (httpResponse?.Body == null || !httpResponse!.Body.CanRead) return;
+                        using var reader = new StreamReader(httpResponse.Body);  
+                        var responseBody = reader.ReadToEndAsync().Result;  
+                        activity.SetTag("http.response.body", responseBody);  
+                        httpResponse.Body.Position = 0;
+                    };  
+                }))
             .WithLogging()
             .WithMetrics(metrics => metrics
                 .AddHttpClientInstrumentation()  

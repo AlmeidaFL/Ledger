@@ -1,5 +1,4 @@
-﻿using LedgerGateway.RestClients.UserApi;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
+﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace LedgerGateway;
 
