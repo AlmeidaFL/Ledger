@@ -9,79 +9,26 @@ using Microsoft.Extensions.Logging;
 using Messaging;
 using Model;
 
-public class UserCreatedHandler(ILogger<UserCreatedHandler> logger, UserDbContext db, IAccountService accountService)
+public class UserCreatedHandler(
+    EventExecution<UserCreatedEvent> executor,
+    UserDbContext db,
+    ILogger<UserCreatedHandler> logger,
+    IAccountService accounts)
     : IMessageHandler<UserCreatedEvent>
 {
-    public async Task HandleAsync(UserCreatedEvent evt, CancellationToken cancellationToken)
+    private readonly ILogger<UserCreatedHandler> _logger = logger;
+
+    public Task HandleAsync(UserCreatedEvent evt, CancellationToken cancellationToken)
     {
-        const int maxRetries = 3;
-        var attempt = 0;
-
-        while (true)
-        {
-            attempt++;
-
-            try
-            {
-                if (await db.ProcessedEvents.AnyAsync(x => x.IdempotencyKey == evt.Id.ToString(), cancellationToken))
-                {
-                    logger.LogInformation("Duplicate event {Id} skipped", evt.Id);
-                    break;
-                }
-
-                await Handle(evt, cancellationToken);
-
-                logger.LogInformation(
-                    "Processed UserCreatedEvent (UserId={UserId}), attempt={Attempt}",
-                    evt.AggregateId, attempt);
-
-                break; 
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (attempt >= maxRetries)
-                {
-                    logger.LogError(
-                        "Concurrency error processing UserCreatedEvent for {UserId} after {Attempt} attempts",
-                        evt.AggregateId, attempt);
-                    throw;
-                }
-
-                logger.LogWarning(
-                    "Concurrency conflict processing UserCreatedEvent for {UserId}, retrying... attempt {Attempt}",
-                    evt.AggregateId, attempt);
-
-                await Task.Delay(100 * attempt, cancellationToken);
-            }
-            catch (Exception ex)
-            {
-                if (attempt >= maxRetries)
-                {
-                    logger.LogError(ex,
-                        "Unexpected error processing UserCreatedEvent for {UserId} after {Attempt} attempts",
-                        evt.AggregateId, attempt);
-                    throw;
-                }
-
-                logger.LogWarning(ex,
-                    "Unexpected conflict processing UserCreatedEvent for {UserId}, retrying... attempt {Attempt}",
-                    evt.AggregateId, attempt);
-
-                await Task.Delay(100 * attempt, cancellationToken);
-            }
-        }
+        return executor.ExecuteAsync(
+            evt,
+            () => HandleInternalAsync(evt, cancellationToken),
+            eventId: evt.Id,
+            cancellationToken);
     }
 
-    private async Task Handle(UserCreatedEvent evt, CancellationToken cancellationToken)
+    private async Task HandleInternalAsync(UserCreatedEvent evt, CancellationToken cancellationToken)
     {
-        await using var trx = await db.Database.BeginTransactionAsync(cancellationToken);
-
-        db.ProcessedEvents.Add(new ProcessedEvent
-        {
-            IdempotencyKey = evt.Id.ToString(),
-            ProcessedAt = DateTime.UtcNow
-        });
-
         var state = await db.ProvisioningStates
             .FirstOrDefaultAsync(x => x.UserId == evt.AggregateId, cancellationToken);
 
@@ -92,7 +39,6 @@ public class UserCreatedHandler(ILogger<UserCreatedHandler> logger, UserDbContex
                 UserId = evt.AggregateId,
                 UserCreatedReceived = true,
             };
-
             db.ProvisioningStates.Add(state);
         }
         else
@@ -114,15 +60,11 @@ public class UserCreatedHandler(ILogger<UserCreatedHandler> logger, UserDbContex
                 IsActive = false
             };
 
-            await db.Users.AddAsync(user, cancellationToken);
-            await accountService.CreateDefaultAccountForUserAsync(user, cancellationToken);
+            db.Users.Add(user);
+            await accounts.CreateDefaultAccountForUserAsync(user, cancellationToken);
         }
 
-        if (state is { UserCreatedReceived: true, FinancialAccountCreatedReceived: true })
+        if (state.UserCreatedReceived && state.FinancialAccountCreatedReceived)
             user.IsActive = true;
-
-        await db.SaveChangesAsync(cancellationToken);
-
-        await trx.CommitAsync(cancellationToken);
     }
 }
