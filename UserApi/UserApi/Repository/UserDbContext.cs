@@ -11,6 +11,7 @@ public class UserDbContext(DbContextOptions<UserDbContext> options)
     public DbSet<Account> Accounts => Set<Account>();
     public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
     public DbSet<ProcessedEvent> ProcessedEvents => Set<ProcessedEvent>();
+    public DbSet<UserProvisioningState> ProvisioningStates => Set<UserProvisioningState>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

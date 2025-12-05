@@ -69,8 +69,8 @@ public class UserService(
                 return Result<UserResponse>.Failure(result.Error!);
             }
 
-            var evt = CreateUserEvent(user);
-            db.OutboxMessages.Add(evt);
+            // var evt = CreateUserEvent(user);
+            // db.OutboxMessages.Add(evt);
 
             await db.SaveChangesAsync(cancellationToken);
 
@@ -88,20 +88,20 @@ public class UserService(
         return Result<UserResponse>.Success(UserConverter.ToResponse(user));
     }
 
-    private static OutboxMessage CreateUserEvent(User user)
-    {
-        var userCreatedEvent = new UserCreatedEvent
-        {
-            Id = Guid.CreateVersion7(),
-            AggregateId = user.Id,
-            Email = user.Email,
-            FullName = user.FullName,
-        };
-        
-        return OutboxMessage.FromEvent(
-            message: userCreatedEvent,
-            "user-api");
-    }
+    // private static OutboxMessage CreateUserEvent(User user)
+    // {
+    //     var userCreatedEvent = new UserCreatedEvent
+    //     {
+    //         Id = Guid.CreateVersion7(),
+    //         AggregateId = user.Id,
+    //         Email = user.Email,
+    //         FullName = user.FullName,
+    //     };
+    //     
+    //     return OutboxMessage.FromEvent(
+    //         message: userCreatedEvent,
+    //         "user-api");
+    // }
 
     public async Task<Result<UserResponse>> GetUserAsync(string email, CancellationToken cancellationToken = default)
     {

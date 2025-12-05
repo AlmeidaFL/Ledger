@@ -6,13 +6,14 @@ using UserApi.Repository;
 using UserApi.Services;
 using ServiceCommons.ApiKey;
 using ServiceCommons.OpenTelemetry;
-using UserApi.Application.Handlers;
 using UserApi.Messaging;
+using UserApi.Messaging.Events;
+using UserApi.Messaging.Handlers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAspNetTelemetry(builder.Configuration);
-builder.Services.Configure<KafkaFinancialAccountCreatedSettings>(
+builder.Services.Configure<KafkaSettings>(
     builder.Configuration.GetSection("Kafka:FinancialAccountCreatedConsumer"));
 
 builder.Services.AddInternalApiKeyAuthentication(builder.Configuration);
@@ -20,8 +21,10 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
-builder.Services.AddScoped<IFinancialAccountCreatedHandler, FinancialAccountCreatedHandler>();
-builder.Services.AddHostedService<FinancialAccountCreatedWorker>();
+builder.Services.AddHostedService<KafkaWorker>();
+
+builder.Services.AddScoped<IMessageHandler<UserCreatedEvent>, UserCreatedHandler>();
+builder.Services.AddScoped<IMessageHandler<FinancialAccountCreatedEvent>, FinancialAccountCreatedHandler>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<UserDbContext>(options =>

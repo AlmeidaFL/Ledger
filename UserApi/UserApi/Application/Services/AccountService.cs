@@ -31,8 +31,8 @@ public class AccountService(UserDbContext db) : IAccountService
         {
             UserId = user.Id,
             AccountNumber = GenerateAccountNumber(),
-            AccountType = "checking",
-            Status = AccountStatus.Pending,
+            AccountType = "Transaction",
+            Status = AccountStatus.Active,
             CreatedAt = DateTime.UtcNow,
         };
 
