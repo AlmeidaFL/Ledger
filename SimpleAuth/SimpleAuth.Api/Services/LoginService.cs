@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using ServiceCommons;
 using SimpleAuth.Api.Dtos;
 using SimpleAuth.Api.Events;
+using SimpleAuth.Api.Messaging;
 using SimpleAuth.Api.Model;
 using SimpleAuth.Api.Repository;
 
@@ -63,7 +64,7 @@ public class LoginService(
             Name = request.Fullname
         };
         
-        return OutboxMessage.FromEvent(evt, serviceOriginName: "simple-auth");
+        return OutboxMessage.FromEvent(evt, serviceOriginName: "simple-auth", TopicNames.RegisteredUserEvent);
     }
 
     public async Task<Result<Credentials>> Login(LoginRequest loginRequest)

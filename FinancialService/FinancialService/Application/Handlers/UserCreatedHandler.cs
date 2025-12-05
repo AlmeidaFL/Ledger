@@ -1,4 +1,5 @@
-﻿using FinancialService.Messaging.Events;
+﻿using FinancialService.Messaging;
+using FinancialService.Messaging.Events;
 using FinancialService.Model;
 using FinancialService.Repository;
 using Microsoft.EntityFrameworkCore;
@@ -20,9 +21,9 @@ public class UserCreatedHandler(
     {
         var user = new User
         {
-            Id = evt.Id,
+            Id = evt.AggregateId,
             Email = evt.Email,
-            Name = evt.FullName,
+            Name = evt.Name,
             CreatedAt = DateTime.UtcNow
         };
 
@@ -30,14 +31,14 @@ public class UserCreatedHandler(
         {
             Id = Guid.CreateVersion7(),
             CreatedAt = DateTime.UtcNow,
-            UserId = evt.Id,
+            UserId = evt.AggregateId,
             Currency = "BRL",
         };
         
         dbContext.Users.Add(user);
         dbContext.Accounts.Add(account);
         var message = CreateEvent(account, user);
-        // dbContext.OutboxMessages.Add(OutboxMessage.FromEvent(message, "financial-service"));
+        dbContext.OutboxMessages.Add(OutboxMessage.FromEvent(message, "financial-service", TopicNames.AccountBalanceCreatedEvent));
 
         try
         {

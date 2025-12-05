@@ -45,10 +45,8 @@ public class EventRelayWorker(
                     {
                         try
                         {
-                            var topic = OutboxMessageTopicResolver.Resolve(message);
-
                             await kafkaProducer.ProduceAsync(
-                                topic: topic,
+                                topic: message.Topic,
                                 key: message.Id.ToString(),
                                 value: message.Payload,
                                 cancellationToken);

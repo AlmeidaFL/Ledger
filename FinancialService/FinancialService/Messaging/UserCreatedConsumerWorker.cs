@@ -13,62 +13,66 @@ public class UserCreatedConsumerWorker(
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        // var config = new ConsumerConfig
-        // {
-        //     BootstrapServers = options.Value.BootstrapServers,
-        //     GroupId = options.Value.GroupId,
-        //     AutoOffsetReset = AutoOffsetReset.Latest,
-        //     EnableAutoCommit = false,
-        // };
-        //
-        // using var consumer = new ConsumerBuilder<string, string>(config).Build();
-        //
-        // consumer.Subscribe(options.Value.Topic);
-        //
-        // logger.LogInformation("Consumer subscribed to topic: {Topic}", options.Value.Topic);
-        //
-        // while (!stoppingToken.IsCancellationRequested)
-        // {
-        //     try
-        //     {
-        //         var result = consumer.Consume(stoppingToken);
-        //
-        //         logger.LogInformation(
-        //             "Received message. Key={Key}, Value={Value}, Partition={Partition}, Offset={Offset}",
-        //             result.Message.Key,
-        //             result.Message.Value,
-        //             result.Partition,
-        //             result.Offset);
-        //
-        //         var user = GetUser(result.Message.Value);
-        //         if (user is null)
-        //         {
-        //             logger.LogWarning("Deserialized event is null");
-        //             consumer.Commit(result);
-        //             continue;
-        //         }
-        //
-        //         await HandleMessage(user, stoppingToken);
-        //
-        //         consumer.Commit(result);
-        //     }
-        //     catch (ConsumeException ex) when (ex.Error.Code == ErrorCode.UnknownTopicOrPart)
-        //     {
-        //         logger.LogWarning("Topic {Topic} not ready yet. Retrying in 5 seconds...", options.Value.Topic);
-        //         await Task.Delay(5000, stoppingToken);
-        //         continue;
-        //     }
-        //     catch (ConsumeException ex)
-        //     {
-        //         logger.LogError(ex, "Error occured while consuming message");
-        //         break;
-        //     }
-        //     
-        //     await Task.Delay(5000, stoppingToken);
-        // }
-        //
-        // consumer.Close();
-        // logger.LogInformation("UserCreatedConsumerWorker shutting down");
+        var config = new ConsumerConfig
+        {
+            BootstrapServers = options.Value.BootstrapServers,
+            GroupId = options.Value.GroupId,
+            AutoOffsetReset = AutoOffsetReset.Latest,
+            EnableAutoCommit = false,
+        };
+        
+        using var consumer = new ConsumerBuilder<string, string>(config).Build();
+
+        var topics = new[]
+        {
+            "simple-auth.registered-user",
+        };
+        consumer.Subscribe(topics);
+        
+        logger.LogInformation("Consumer subscribed to topic: {Topic}", string.Join(",", topics));
+        
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            try
+            {
+                var result = consumer.Consume(stoppingToken);
+        
+                logger.LogInformation(
+                    "Received message. Key={Key}, Value={Value}, Partition={Partition}, Offset={Offset}",
+                    result.Message.Key,
+                    result.Message.Value,
+                    result.Partition,
+                    result.Offset);
+        
+                var user = GetUser(result.Message.Value);
+                if (user is null)
+                {
+                    logger.LogWarning("Deserialized event is null");
+                    consumer.Commit(result);
+                    continue;
+                }
+        
+                await HandleMessage(user, stoppingToken);
+        
+                consumer.Commit(result);
+            }
+            catch (ConsumeException ex) when (ex.Error.Code == ErrorCode.UnknownTopicOrPart)
+            {
+                logger.LogError(ex, "Topic not ready yet. Retrying in 5 seconds...");
+                await Task.Delay(5000, stoppingToken);
+                continue;
+            }
+            catch (ConsumeException ex)
+            {
+                logger.LogError(ex, "Error occured while consuming message");
+                break;
+            }
+            
+            await Task.Delay(5000, stoppingToken);
+        }
+        
+        consumer.Close();
+        logger.LogInformation("UserCreatedConsumerWorker shutting down");
     }
     
     private UserCreatedEvent? GetUser(string value)

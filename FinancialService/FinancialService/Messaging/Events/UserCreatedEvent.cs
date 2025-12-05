@@ -1,8 +1,12 @@
-﻿namespace FinancialService.Messaging.Events;
+﻿using ServiceCommons;
 
-public class UserCreatedEvent
+namespace FinancialService.Messaging.Events;
+
+public class UserCreatedEvent : IOutboxEvent
 {
-    public Guid Id { get; set; }
-    public string Email { get; set; }
-    public string FullName { get; set; }
+    public Guid Id { get; init; }
+    public Guid AggregateId { get; init; }
+    public string Email { get; init; }
+    public string Name { get; init; }
+    public DateTime CreatedAt { get; init; }
 }

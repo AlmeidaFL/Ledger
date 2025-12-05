@@ -17,7 +17,7 @@ public class OutboxMessage
     
     public string ServiceOriginName { get; set; }
     public string Type { get; set; }
-    public string? Topic { get; set; }
+    public string Topic { get; set; }
     public string Payload { get; set; }
     public Guid AggregateId { get; set; }
     
@@ -30,7 +30,7 @@ public class OutboxMessage
     public static OutboxMessage FromEvent<T>(
         T message,
         string serviceOriginName,
-        string? topic = null)
+        string topic)
         where T : IOutboxEvent
     {
         return new OutboxMessage
@@ -39,7 +39,7 @@ public class OutboxMessage
             ServiceOriginName = serviceOriginName,
             Type = nameof(T),
             AggregateId = message.AggregateId,
-            Topic = topic,
+            Topic = $"{serviceOriginName}.{topic}",
             Payload = JsonSerializer.Serialize(message),
         };
     }
