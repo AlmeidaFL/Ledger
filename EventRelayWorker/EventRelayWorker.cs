@@ -3,6 +3,7 @@ using EventRelayWorker.Messaging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Options;
+using ServiceCommons;
 
 namespace EventRelayWorker;
 
@@ -44,10 +45,7 @@ public class EventRelayWorker(
                     {
                         try
                         {
-                            var topic = TopicResolver.ResolveTopic(
-                                message.ServiceOriginName,
-                                message.Type,
-                                message.Topic);
+                            var topic = OutboxMessageTopicResolver.Resolve(message);
 
                             await kafkaProducer.ProduceAsync(
                                 topic: topic,
