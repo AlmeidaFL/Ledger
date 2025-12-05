@@ -1,5 +1,7 @@
 ﻿using FinancialService.Application.Services;
 using Grpc.Core;
+using Microsoft.AspNetCore.Connections.Features;
+using ServiceCommons;
 
 namespace FinancialService.Grpc;
 
@@ -8,10 +10,26 @@ public class FinancialService(
     ITransferService transferService) 
     : global::FinancialService.FinancialService.FinancialServiceBase
 {
+    public override Task<TestRequest> Test(TestRequest request, ServerCallContext context)
+    {
+        var http = context.GetHttpContext();
+
+        var protocol = http.Request.Protocol;
+        var isHttps = http.Request.IsHttps;
+        var hasTls = http.Features.Get<ITlsHandshakeFeature>() != null;
+
+        Console.WriteLine($"Protocol negotiated: {protocol}");
+        Console.WriteLine($"IsHttps: {isHttps}");
+        Console.WriteLine($"TLS handshake feature present: {hasTls}");
+        
+        Console.WriteLine($"[gRPC SERVER] Protocol negotiated: {protocol}");
+        return Task.FromResult(request);
+    }
+
     public override async Task<DepositResponse> Deposit(DepositRequest request, ServerCallContext context)
     {
         var result = await depositService.DepositAsync(
-            userId: Guid.Parse(request.UserId),
+            userEmail: request.UserEmail,
             amount: request.Amount,
             currency: request.Currency,
             idempotencyKey: request.IdempotencyKey,
@@ -34,8 +52,8 @@ public class FinancialService(
     public override async Task<TransferResponse> Transfer(TransferRequest request, ServerCallContext context)
     {
         var result = await transferService.TransferAsync(
-            fromAccountId: Guid.Parse(request.FromAccountId),
-            toAccountId: Guid.Parse(request.ToAccountId),
+            fromAccountEmail: request.FromAccountEmail,
+            toAccountEmail: request.ToAccountEmail,
             amount: request.Amount,
             currency: request.Currency,
             idempotencyKey: request.IdempotencyKey,

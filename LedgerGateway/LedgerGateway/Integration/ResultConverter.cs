@@ -5,7 +5,7 @@ namespace LedgerGateway.Integration;
 
 public static class ResultConverter
 {
-    public static ServiceCommons.Result ToDto(Result grpc, object? value = null)
+    public static ServiceCommons.Result Convert(Result? grpc, object? value = null)
     {
         return (grpc?.IsSuccess ?? false) 
             ? ServiceCommons.Result.Success(value) 

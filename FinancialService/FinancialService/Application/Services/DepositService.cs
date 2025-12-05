@@ -11,7 +11,7 @@ namespace FinancialService.Application.Services;
 public interface IDepositService
 {
     Task<Result<DepositResult>> DepositAsync(
-        Guid userId,
+        string userEmail,
         long amount,
         string currency,
         string idempotencyKey,
@@ -23,9 +23,9 @@ public class DepositService(
     FinancialDbContext db,
     IAccountLockService lockService) : IDepositService
 {
-    public async Task<Result<DepositResult>> DepositAsync(Guid userId, long amount, string currency, string idempotencyKey, CancellationToken cancellationToken)
+    public async Task<Result<DepositResult>> DepositAsync(string userEmail, long amount, string currency, string idempotencyKey, CancellationToken cancellationToken)
     {
-        logger.LogInformation("Deposit {DepositAmount} for user {UserId}", amount, userId);
+        logger.LogInformation("Deposit {DepositAmount} for user {UserEmail}", amount, userEmail);
         
         var cashInAccount = await db.Accounts
             .FirstOrDefaultAsync(a =>
@@ -38,8 +38,9 @@ public class DepositService(
         }
         
         var userAccount = await db.Accounts
+            .Include(a => a.User)
             .FirstOrDefaultAsync(a =>
-                a.UserId == userId
+                a.User.Email == userEmail
                 && a.Currency == currency, cancellationToken: cancellationToken);
 
         if (userAccount == null)
@@ -47,7 +48,7 @@ public class DepositService(
             return Result<DepositResult>.Failure("User account not found", ErrorType.Unexpected);
         }
 
-        return await ProcessDepositAsync(userId, amount, idempotencyKey, userAccount, cancellationToken);
+        return await ProcessDepositAsync(userAccount.User.Id, amount, idempotencyKey, userAccount, cancellationToken);
     }
 
     private async Task<Result<DepositResult>> ProcessDepositAsync(Guid userId, long amount, string idempotencyKey, Account userAccount,

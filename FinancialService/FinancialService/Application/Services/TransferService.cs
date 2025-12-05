@@ -10,8 +10,8 @@ namespace FinancialService.Application.Services;
 public interface ITransferService
 {
     Task<Result<TransferResult>> TransferAsync(
-        Guid fromAccountId,
-        Guid toAccountId,
+        string fromAccountEmail,
+        string toAccountEmail,
         long amount,
         string currency,
         string idempotencyKey,
@@ -25,8 +25,8 @@ public class TransferService(
     FinancialDbContext db) : ITransferService
 {
     public async Task<Result<TransferResult>> TransferAsync(
-        Guid fromAccountId, 
-        Guid toAccountId, 
+        string fromAccountEmail, 
+        string toAccountEmail, 
         long amount, 
         string currency, 
         string idempotencyKey,
@@ -35,7 +35,7 @@ public class TransferService(
     {
         logger.LogInformation(
             "Starting transfer {Amount} {Currency} from {From} to {To}",
-            amount, currency, fromAccountId, toAccountId);
+            amount, currency, fromAccountEmail, toAccountEmail);
 
         if (amount <= 0)
         {
@@ -43,14 +43,16 @@ public class TransferService(
         }
         
         var fromAccount = await db.Accounts
-            .FirstOrDefaultAsync(a => a.Id == fromAccountId && a.Currency == currency, cancellationToken);
+            .Include(a => a.User)
+            .FirstOrDefaultAsync(a => a.User.Email == fromAccountEmail && a.Currency == currency, cancellationToken);
         if (fromAccount == null)
         {
             return Result<TransferResult>.Failure("Source account not found", ErrorType.Unexpected);
         }
 
         var toAccount = await db.Accounts
-            .FirstOrDefaultAsync(a => a.Id == toAccountId && a.Currency == currency, cancellationToken);
+            .Include(a => a.User)
+            .FirstOrDefaultAsync(a => a.User.Email == toAccountEmail && a.Currency == currency, cancellationToken);
         if (toAccount == null)
         {
             return Result<TransferResult>.Failure("Destination account not found", ErrorType.Unexpected);
@@ -61,7 +63,12 @@ public class TransferService(
             .FirstOrDefaultAsync(t => t.IdempotencyKey == idempotencyKey, cancellationToken);
 
         if (existing == null)
-            return await ProcessTransferAsync(fromAccountId, toAccountId, amount, currency, idempotencyKey, fromAccount,
+            return await ProcessTransferAsync(
+                fromAccount.Id, 
+                toAccount.Id, 
+                amount, 
+                currency, 
+                idempotencyKey,
                 cancellationToken);
        
         logger.LogInformation("Transfer replay detected for key {IdempotencyKey}", idempotencyKey);
@@ -79,7 +86,6 @@ public class TransferService(
         long amount,
         string currency,
         string idempotencyKey,
-        Account fromAccount,
         CancellationToken cancellationToken)
     {
         await using var tx = await db.Database.BeginTransactionAsync(cancellationToken);
@@ -128,7 +134,7 @@ public class TransferService(
             
             logger.LogInformation(
                 "Transfer completed: {TransferCurrency}{TransferAmount} {TransferFrom} -> {TransferTo}",
-                amount, currency, amount, fromAccount);
+                currency, amount, fromAccountId, toAccountId);
 
             return Result<TransferResult>.Success(new TransferResult
             {

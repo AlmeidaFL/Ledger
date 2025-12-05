@@ -13,6 +13,7 @@ public class Result
         IsSuccess = isSuccess;
         Error = error;
         ErrorType = errorType;
+        Value = value;
     }
 
     public static Result Success()

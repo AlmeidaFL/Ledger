@@ -1,4 +1,5 @@
-﻿using LedgerGateway.Integration;
+﻿using LedgerGateway.Dtos;
+using LedgerGateway.Integration;
 
 namespace LedgerGateway.Controllers;
 
@@ -10,26 +11,35 @@ using ServiceCommons;
 [Route("api/financial")]
 public class FinancialController(FinancialService.FinancialServiceClient client) : ControllerBase
 {
+    [HttpGet("test")]
+    public async Task<IActionResult> Test()
+    {
+        return Ok(new
+        {
+            message = await client.TestAsync(new TestRequest{ Testou = "sim" })
+        });
+    }
+    
+    
     [HttpPost("deposit")]
-    public async Task<IActionResult> DepositAsync([FromBody] DepositRequest request, CancellationToken ct)
+    public async Task<IActionResult> DepositAsync([FromBody] DepositRequestDto request, CancellationToken ct)
     {
         var result = await GrpcSafeCaller.Call(async () =>
         {
-            var response = await client.DepositAsync(request, cancellationToken: ct);
-            return ResultConverter.ToDto(response.Result, response.ToDto());
-            
+            var response = await client.DepositAsync(request.ToGrpc(), cancellationToken: ct);
+            return ResultConverter.Convert(response.Result, response.ToDto());
         });
 
         return this.FromResult(result);
     }
 
     [HttpPost("transfer")]
-    public async Task<IActionResult> TransferAsync([FromBody] TransferRequest request,  CancellationToken ct)
+    public async Task<IActionResult> TransferAsync([FromBody] TransferRequestDto request,  CancellationToken ct)
     {
         var result = await GrpcSafeCaller.Call(async () =>
         {
-            var response = await client.TransferAsync(request, cancellationToken: ct);
-            return ResultConverter.ToDto(response.Result, response.ToDto());
+            var response = await client.TransferAsync(request.ToGrpc(), cancellationToken: ct);
+            return ResultConverter.Convert(response.Result, response.ToDto());
         });
 
         return this.FromResult(result);

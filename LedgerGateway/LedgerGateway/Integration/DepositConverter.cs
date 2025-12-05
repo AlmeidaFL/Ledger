@@ -8,7 +8,7 @@ public static class DepositConverter
     public static DepositRequest ToGrpc(this DepositRequestDto dto)
         => new DepositRequest
         {
-            UserId = dto.UserId,
+            UserEmail = dto.UserEmail,
             Amount = dto.Amount,
             Currency = dto.Currency,
             IdempotencyKey = dto.IdempotencyKey

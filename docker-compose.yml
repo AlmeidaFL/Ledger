@@ -89,12 +89,16 @@ services:
       context: .
       dockerfile: FinancialService/FinancialService/Dockerfile
     environment:
+      ASPNETCORE_Kestrel__Certificates__Default__Path: /app/certs/grpc-dev.pfx
+      ASPNETCORE_Kestrel__Certificates__Default__Password: 1234
       OpenTelemetry__ExporterUrl: http://signoz-otel-collector:4317
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://0.0.0.0:5003
       ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=financialservice;Username=postgres;Password=postgres"
     ports:
       - "5003:5003"
+    volumes:
+      - "./certs/grpc-dev.pfx:./app/certs/grpc-dev.pfx:ro"
     networks:
       - signoz-ledger-net
       - ledger-net
@@ -122,6 +126,13 @@ services:
       ASPNETCORE_URLS: http://0.0.0.0:5000
     ports:
       - "5000:5000"
+    volumes:
+      - ./certs/grpc-dev.crt:/usr/local/share/ca-certificates/grp-dev.crt:ro
+    command: |
+      sh -c "
+        update-ca-certificates &&
+        dotnet LedgerGateway.dll
+      "
     networks:
       - signoz-ledger-net
       - ledger-net

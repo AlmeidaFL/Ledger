@@ -18,7 +18,7 @@ public class AccountLockService(FinancialDbContext db) : IAccountLockService
         await db.Database.ExecuteSqlRawAsync(
             """
             SELECT 42 FROM "AccountLocks" 
-                          WHERE "AccountId" = {0} 
+                          WHERE "Id" = {0} 
                           FOR UPDATE
             """,
             first);
@@ -26,7 +26,7 @@ public class AccountLockService(FinancialDbContext db) : IAccountLockService
         await db.Database.ExecuteSqlRawAsync(
             """
             SELECT 42 FROM "AccountLocks" 
-                          WHERE "AccountId" = {0} 
+                          WHERE "Id" = {0} 
                           FOR UPDATE
             """,
             second);
@@ -37,7 +37,7 @@ public class AccountLockService(FinancialDbContext db) : IAccountLockService
         await db.Database.ExecuteSqlRawAsync(
             """
             SELECT 42 FROM "AccountLocks" 
-                          WHERE "AccountId" = {0} 
+                          WHERE "Id" = {0} 
                           FOR UPDATE
             """,
             userId);
