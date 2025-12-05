@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ServiceCommons;
 using UserApi.Model;
 
 namespace UserApi.Repository;

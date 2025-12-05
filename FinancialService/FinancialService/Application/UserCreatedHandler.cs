@@ -3,6 +3,7 @@ using FinancialService.Model;
 using FinancialService.Repository;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using ServiceCommons;
 
 namespace FinancialService.Application;
 
@@ -36,7 +37,7 @@ public class UserCreatedHandler(
         dbContext.Users.Add(user);
         dbContext.Accounts.Add(account);
         var message = CreateEvent(account, user);
-        dbContext.OutboxMessages.Add(OutboxMessage.FromEvent(message, OutboxMessage.FinancialAccountCreatedTopic));
+        // dbContext.OutboxMessages.Add(OutboxMessage.FromEvent(message, "financial-service"));
 
         try
         {
@@ -59,8 +60,8 @@ public class UserCreatedHandler(
     {
         var message = new FinancialAccountCreatedEvent()
         {
-            Id = Guid.NewGuid().ToString(),
-            AccountId = account.Id,
+            Id = Guid.CreateVersion7(),
+            AggregateId = account.Id,
             UserId = user.Id,
         };
         return message;

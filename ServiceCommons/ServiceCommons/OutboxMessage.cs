@@ -1,24 +1,25 @@
-﻿
-using System.Text.Json;
+﻿using System.Text.Json;
 
-namespace UserApi.Model;
+namespace ServiceCommons;
 
 public interface IOutboxEvent
 {
-    public string Id { get; set; }
+    /// <summary>
+    /// It should be a GUID version 7
+    /// </summary>
+    public Guid Id { get; init; }
+    public Guid AggregateId { get; init; }
 }
 
 public class OutboxMessage
 {
-    public const string UserCreatedTopic = "UserCreated";
-    
-    public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid Id { get; set; }
     
     public string ServiceOriginName { get; set; }
     public string Type { get; set; }
-    public string Topic { get; set; }
+    public string? Topic { get; set; }
     public string Payload { get; set; }
-    public string AggregateId { get; set; }
+    public Guid AggregateId { get; set; }
     
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? ProcessedAt { get; set; }
@@ -26,14 +27,18 @@ public class OutboxMessage
     public string? Error { get; set; }
     public int RetryCount { get; set; }
 
-    public static OutboxMessage FromEvent<T>(T message, string topic)
+    public static OutboxMessage FromEvent<T>(
+        T message,
+        string serviceOriginName,
+        string? topic = null)
         where T : IOutboxEvent
     {
         return new OutboxMessage
         {
-            ServiceOriginName = "user-api",
+            Id = message.Id,
+            ServiceOriginName = serviceOriginName,
             Type = nameof(T),
-            AggregateId = message.Id,
+            AggregateId = message.AggregateId,
             Topic = topic,
             Payload = JsonSerializer.Serialize(message),
         };

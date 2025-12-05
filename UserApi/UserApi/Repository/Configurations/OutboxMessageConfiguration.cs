@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using ServiceCommons;
 using UserApi.Model;
 
 namespace UserApi.Repository.Configurations;

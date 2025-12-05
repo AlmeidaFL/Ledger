@@ -27,7 +27,7 @@ public class FinancialAccountCreatedHandler(
         
         var processedEvent = new ProcessedEvent
         {
-            IdempotencyKey = evt.Id,
+            IdempotencyKey = evt.Id.ToString(),
             ProcessedAt = DateTime.UtcNow
         };
         

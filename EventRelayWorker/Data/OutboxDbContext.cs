@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ServiceCommons;
 
 namespace EventRelayWorker.Data;
 
@@ -12,8 +13,12 @@ public class OutboxDbContext(DbContextOptions<OutboxDbContext> options, string t
     {
         modelBuilder.Entity<OutboxMessage>(b =>
         {
-            b.ToTable(tableName);
             b.HasKey(x => x.Id);
+            b.Property(x => x.Payload)
+                .HasColumnType("jsonb");
+            b.Property(x => x.CreatedAt)
+                .HasDefaultValueSql("NOW()");
+            b.HasIndex(x => x.ProcessedAt);
         });
     }
 }

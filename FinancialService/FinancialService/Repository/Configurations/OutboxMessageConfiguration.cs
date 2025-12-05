@@ -1,6 +1,7 @@
 ﻿using FinancialService.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using ServiceCommons;
 
 namespace FinancialService.Repository.Configurations;
 

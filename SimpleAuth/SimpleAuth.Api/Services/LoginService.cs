@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ServiceCommons;
 using SimpleAuth.Api.Dtos;
+using SimpleAuth.Api.Events;
 using SimpleAuth.Api.Model;
 using SimpleAuth.Api.Repository;
 
@@ -29,13 +30,16 @@ public class LoginService(
         
         var user = new User
         {
-            Id = Guid.NewGuid(),
+            Id = Guid.CreateVersion7(),
             Email = email,
             PasswordHash = hasher.Hash(request.Password),
         };
+
+        var userCreatedEvent = CreateUserEvent(request, user.Id);
         
         try
         {
+            await db.OutboxMessages.AddAsync(userCreatedEvent);
             await db.Users.AddAsync(user);
             await db.SaveChangesAsync();
         }
@@ -45,6 +49,21 @@ public class LoginService(
         }
 
         return Result<User>.Success(user);
+    }
+
+    private static OutboxMessage CreateUserEvent(RegisterRequest request, Guid userId)
+    {
+        var eventId = Guid.CreateVersion7();
+        var evt = new UserCreatedEvent
+        {
+            Id = eventId,
+            AggregateId = userId,
+            Email = request.Email,
+            CreatedAt = DateTime.UtcNow,
+            Name = request.Fullname
+        };
+        
+        return OutboxMessage.FromEvent(evt, serviceOriginName: "simple-auth");
     }
 
     public async Task<Result<Credentials>> Login(LoginRequest loginRequest)
