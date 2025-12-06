@@ -4,7 +4,7 @@ import { RegisterComponent } from './auth/register/register';
 import { MainLayout as MainLayoutComponent } from './layout/main-layout/main-layout';
 import { Home as HomeComponent } from './home/home/home';
 import { Deposit as DepositComponent } from './home/deposit/deposit';
-import { Transfer as TransferComponent } from './home/transfer/transfer';
+import { TransferComponent} from './home/transfer/transfer';
 
 export const routes: Routes = [
     {
