@@ -1,0 +1,32 @@
+<div class="min-h-screen bg-zinc-100 flex">
+
+  <div class="w-56 bg-white border-r border-zinc-300 p-6">
+    <h2 class="text-xl font-semibold text-zinc-800 mb-8">
+      Ledger
+    </h2>
+
+    <nav class="space-y-4 text-sm">
+      <a routerLink="/home"
+         routerLinkActive="text-indigo-600 font-medium"
+         class="block text-zinc-700 hover:text-indigo-600 transition">
+        Home
+      </a>
+
+      <a routerLink="/home/deposit"
+         routerLinkActive="text-indigo-600 font-medium"
+         class="block text-zinc-700 hover:text-indigo-600 transition">
+        Deposit
+      </a>
+
+      <a routerLink="/home/transfer"
+         routerLinkActive="text-indigo-600 font-medium"
+         class="block text-zinc-700 hover:text-indigo-600 transition">
+        Transfer
+      </a>
+    </nav>
+  </div>
+
+  <main class="flex-1 p-10">
+    <router-outlet></router-outlet>
+  </main>
+</div>
