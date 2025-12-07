@@ -4,6 +4,5 @@ namespace LedgerGateway.Dtos;
 
 public class RefreshRequestDto
 {
-    [Required]
-    public string Token { get; set; }
+    public string? Token { get; set; }
 }

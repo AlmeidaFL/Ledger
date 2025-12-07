@@ -83,14 +83,24 @@ public class SimpleAuthController(
         [FromBody] RefreshRequestDto dto,
         CancellationToken ct = default)
     {
+        var isSpaClient = Request.Headers.TryGetValue("X-Client-Type", out var value)
+                          && value == "spa";
         var request = dto.Convert();
+        
+        if (isSpaClient)
+        {
+            var token = Request.Cookies["refresh_token"] ?? string.Empty;
+            request = new RefreshRequest
+            {
+                RefreshToken = token,
+            };
+        }
+        
         request.UserAgentInfo = GetUserAgentInfoDto().ToUserAgentInfo();
         var result = await RestSafeCaller.Call(() =>
             client.RefreshAsync(request, ct)
         );
 
-        var isSpaClient = Request.Headers.TryGetValue("X-Client-Type", out var value)
-                          && value == "spa";
         if (isSpaClient)
         {
             var tokens = result.Value;

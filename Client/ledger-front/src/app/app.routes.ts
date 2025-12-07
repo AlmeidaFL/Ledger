@@ -5,6 +5,7 @@ import { MainLayout as MainLayoutComponent } from './layout/main-layout/main-lay
 import { Home as HomeComponent } from './home/home/home';
 import { Deposit as DepositComponent } from './home/deposit/deposit';
 import { TransferComponent} from './home/transfer/transfer';
+import { authGuard } from './core/auth.guard';
 
 export const routes: Routes = [
     {
@@ -22,9 +23,9 @@ export const routes: Routes = [
         path: '',
         component: MainLayoutComponent,
         children: [
-            { path: 'home', component: HomeComponent},
-            { path: 'home/deposit', component: DepositComponent},
-            { path: 'home/transfer', component: TransferComponent},
+            { path: 'home', component: HomeComponent, canActivate: [authGuard]},
+            { path: 'home/deposit', component: DepositComponent, canActivate: [authGuard]},
+            { path: 'home/transfer', component: TransferComponent, canActivate: [authGuard]},
             { path: '', redirectTo: 'home', pathMatch: 'full' }
         ]
     }

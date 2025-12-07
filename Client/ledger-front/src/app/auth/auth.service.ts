@@ -54,7 +54,7 @@ export class AuthService {
             );
 
             const user = await firstValueFrom(
-                this.http.get<User>(`${this.baseUrl}/api/users/${request.email}`)
+                this.http.get<User>(`${this.baseUrl}/api/users?email=${request.email}`)
             );
 
             if (!user.isActive) {
@@ -82,5 +82,28 @@ export class AuthService {
 
         this.currentUser.set(null);
         this.router.navigate(['/login']);
+    }
+
+    async loadMe(): Promise<boolean> {
+        try {
+            const user = await firstValueFrom(this.http.get<User>(`${this.baseUrl}/api/users?email=`));
+
+            this.currentUser.set(user);
+            return true;
+
+        } catch {
+            return false;
+        }
+    }
+
+    async refreshToken(): Promise<boolean> {
+        try {
+            await firstValueFrom(this.http.post(`${this.baseUrl}/api/auth/refresh`, {}));
+        } catch (err) {
+            console.error('refresh failed:', err);
+            return false;
+        }
+
+        return true;
     }
 }

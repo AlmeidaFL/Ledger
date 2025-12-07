@@ -1,4 +1,5 @@
-﻿using LedgerGateway.RestClients.UserApi;
+﻿using System.Security.Claims;
+using LedgerGateway.RestClients.UserApi;
 using Microsoft.AspNetCore.Mvc;
 using ServiceCommons;
 
@@ -19,30 +20,36 @@ public class UserApiController(UserApiClient client) : ControllerBase
     }
     
     [HttpGet]
-    public async Task<ActionResult> GetUser([FromQuery] string userEmail, CancellationToken ct)
+    public async Task<ActionResult> GetUser([FromQuery] string? email, CancellationToken ct)
     {
+        var isSpaClient = Request.Headers.TryGetValue("X-Client-Type", out var value)
+                          && value == "spa";
+        
+        var emailValue = isSpaClient && email is null ?
+            User.FindFirstValue(ClaimTypes.Email) : email;
+        
         var result = await RestSafeCaller.Call(() =>
-            client.UserGETAsync(userEmail, ct)
+            client.UserGETAsync(email, ct)
         );
 
         return this.FromResult(result);
     }
     
     [HttpPut]
-    public async Task<ActionResult> UpdateUser([FromQuery] string userEmail, [FromBody] UpdateUserRequest request, CancellationToken ct = default)
+    public async Task<ActionResult> UpdateUser([FromQuery] string email, [FromBody] UpdateUserRequest request, CancellationToken ct = default)
     {
         var result = await RestSafeCaller.Call(() =>
-            client.UserPUTAsync(userEmail, request, ct)
+            client.UserPUTAsync(email, request, ct)
         );
 
         return this.FromResult(result);
     }
     
     [HttpDelete]
-    public async Task<ActionResult> Delete([FromQuery] string userEmail, CancellationToken ct = default)
+    public async Task<ActionResult> Delete([FromQuery] string email, CancellationToken ct = default)
     {
         var result = await RestSafeCaller.Call(() =>
-            client.UserDELETEAsync(userEmail, ct)
+            client.UserDELETEAsync(email, ct)
         );
 
         return this.FromResult(result);
