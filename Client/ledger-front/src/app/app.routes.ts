@@ -6,18 +6,20 @@ import { Home as HomeComponent } from './home/home/home';
 import { Deposit as DepositComponent } from './home/deposit/deposit';
 import { TransferComponent} from './home/transfer/transfer';
 import { authGuard } from './core/auth.guard';
+import { authPublicGuard } from './core/auth-public.guard';
 
 export const routes: Routes = [
     {
         path: 'auth',
+        canMatch: [authPublicGuard],
         children: [
-            { path: 'login', component: LoginComponent },
-            { path: 'register', component: RegisterComponent },
-            // { path: '', redirectTo: 'login', pathMatch: 'full' }
+            { path: 'login', component: LoginComponent},
+            { path: 'register', component: RegisterComponent},
+            { path: '', redirectTo: 'login', pathMatch: 'full'}
         ]
     },
-    // { path: '', redirectTo: 'auth/login', pathMatch: 'full'},
 
+    { path: '**', redirectTo: '' },
 
     {
         path: '',

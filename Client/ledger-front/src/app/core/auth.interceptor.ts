@@ -8,7 +8,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     return next(req).pipe(
         catchError((error: any) => {
             if (error.status === 401 || error.status === 403) {
-                inject(Router).navigate(['/login']);
+                inject(Router).navigate(['auth/login']);
             }
             return throwError(() => error);
         })

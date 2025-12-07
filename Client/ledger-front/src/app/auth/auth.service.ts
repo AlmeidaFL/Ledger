@@ -28,7 +28,7 @@ interface User {
   providedIn: 'root'
 })
 export class AuthService {
-    private readonly baseUrl = environment.apiBaseUrl;
+    private readonly baseUrl = "http://localhost:5000";
 
     currentUser = signal<User | null>(null);
 

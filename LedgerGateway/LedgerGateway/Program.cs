@@ -28,12 +28,26 @@ builder.Services.AddSingleton<IUserAgentParser, UserAgentParser>();
 
 ConfigureClients(builder);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("gateway-cors", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:4200")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
+
 builder.Services.AddHealthChecks()
     .AddCheck("self", () => HealthCheckResult.Healthy(), tags: ["live"])
     .AddCheck<ServicesHealthCheck>("external-apis", tags: ["ready"]);
 
 var app = builder.Build();
 
+app.UseCors("gateway-cors");
+    
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
