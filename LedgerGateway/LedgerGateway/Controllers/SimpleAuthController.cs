@@ -41,17 +41,14 @@ public class SimpleAuthController(
         );
 
         var isSpaClient = Request.Headers.TryGetValue("X-Client-Type", out var value)
-            && value == "spa";
-
-        if (!isSpaClient || result.IsFailure)
+                          && value == "spa";
+        if (isSpaClient)
         {
-            return this.FromResult(result);
+            var tokens = result.Value;
+            AddCookies(tokens);
         }
 
-        var tokens = result.Value;
-        AddCookies(tokens);
-
-        return Ok();
+        return this.FromResult(result);
     }
 
     private void AddCookies(Credentials? tokens)
@@ -94,16 +91,13 @@ public class SimpleAuthController(
 
         var isSpaClient = Request.Headers.TryGetValue("X-Client-Type", out var value)
                           && value == "spa";
-
-        if (!isSpaClient || result.IsFailure)
+        if (isSpaClient)
         {
-            return this.FromResult(result);
+            var tokens = result.Value;
+            AddCookies(tokens);
         }
 
-        var tokens = result.Value;
-        AddCookies(tokens);
-
-        return Ok();
+        return this.FromResult(result);
     }
 
     [HttpPost("logout")]
@@ -115,6 +109,13 @@ public class SimpleAuthController(
         var result = await RestSafeCaller.Call(() =>
             client.LogoutAsync(userEmail, request, ct)
         );
+        
+        var isSpaClient = Request.Headers.TryGetValue("X-Client-Type", out var value)
+                          && value == "spa";
+        if (isSpaClient)
+        {
+            AddCookies(new Credentials());
+        }
 
         return this.FromResult(result);
     }
