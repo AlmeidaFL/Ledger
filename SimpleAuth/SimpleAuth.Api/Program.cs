@@ -42,41 +42,6 @@ builder.Services.AddSwaggerGen(c =>
 });
 builder.Services.AddHealthChecks();
 
-var key = builder.Configuration["Jwt:Key"];
-var issuer = builder.Configuration["Jwt:Issuer"];
-var audience = builder.Configuration["Jwt:Audience"];
-//
-// builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-//     .AddJwtBearer(options =>
-//     {
-//         options.Events = new JwtBearerEvents()
-//         {
-//             OnMessageReceived = context =>
-//             {
-//                 var accessToken = context.Request.Cookies["access_token"];
-//                 if (!string.IsNullOrEmpty(accessToken))
-//                 {
-//                     context.Token = accessToken;
-//                 }
-//
-//                 return Task.CompletedTask;
-//             }
-//         };
-//         
-//         options.TokenValidationParameters = new TokenValidationParameters()
-//         {
-//             ValidateIssuerSigningKey = true,
-//             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key!)),
-//             ValidateAudience = true,
-//             ValidAudience = audience,
-//             ValidateIssuer = true,
-//             ValidIssuer = issuer,
-//             
-//             ValidateLifetime = true,
-//             ClockSkew = TimeSpan.Zero
-//         };
-//     });
-
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

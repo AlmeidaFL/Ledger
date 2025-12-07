@@ -35,12 +35,50 @@ public class SimpleAuthController(
         var userAgentInfo = GetUserAgentInfoDto().ToUserAgentInfo();
         var loginRequest = dto.Convert();
         loginRequest.UserAgentInfo = userAgentInfo;
-        
+    
         var result = await RestSafeCaller.Call(() =>
             client.LoginAsync(loginRequest, ct)
         );
 
-        return this.FromResult(result);
+        var isSpaClient = Request.Headers.TryGetValue("X-Client-Type", out var value)
+            && value == "spa";
+
+        if (!isSpaClient || result.IsFailure)
+        {
+            return this.FromResult(result);
+        }
+
+        var tokens = result.Value;
+        AddCookies(tokens);
+
+        return Ok();
+    }
+
+    private void AddCookies(Credentials? tokens)
+    {
+        Response.Cookies.Append(
+            "refresh_token",
+            tokens!.RefreshToken,
+            new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Path = "/"
+            }
+        );
+        
+        Response.Cookies.Append(
+            "access_token",
+            tokens!.RefreshToken,
+            new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Path = "/"
+            }
+        );
     }
 
     [HttpPost("refresh")]
@@ -54,7 +92,18 @@ public class SimpleAuthController(
             client.RefreshAsync(request, ct)
         );
 
-        return this.FromResult(result);
+        var isSpaClient = Request.Headers.TryGetValue("X-Client-Type", out var value)
+                          && value == "spa";
+
+        if (!isSpaClient || result.IsFailure)
+        {
+            return this.FromResult(result);
+        }
+
+        var tokens = result.Value;
+        AddCookies(tokens);
+
+        return Ok();
     }
 
     [HttpPost("logout")]

@@ -11,6 +11,7 @@ using ServiceCommons.OpenTelemetry;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddClientAuthentication(builder.Configuration);
 builder.Services.AddAspNetTelemetry(builder.Configuration);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -66,6 +67,9 @@ app.MapHealthChecks("/health", new HealthCheckOptions
 });
 
 app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapControllers();
 app.Run();
 return;

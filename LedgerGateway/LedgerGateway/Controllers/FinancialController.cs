@@ -1,5 +1,6 @@
 ﻿using LedgerGateway.Dtos;
 using LedgerGateway.Integration;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LedgerGateway.Controllers;
 
@@ -11,6 +12,13 @@ using ServiceCommons;
 [Route("api/financial")]
 public class FinancialController(FinancialService.FinancialServiceClient client) : ControllerBase
 {
+    [Authorize]
+    [HttpGet("test2")]
+    public async Task<IActionResult> Test2()
+    {
+        return Ok();
+    }
+    
     [HttpGet("test")]
     public async Task<IActionResult> Test()
     {
