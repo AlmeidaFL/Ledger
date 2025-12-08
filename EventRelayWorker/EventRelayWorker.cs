@@ -9,13 +9,23 @@ namespace EventRelayWorker;
 
 public class EventRelayWorker(
     ILogger<EventRelayWorker> logger,
+    ILogger<KafkaBootstrapper> bootstrapLogger,
     IOptions<Tenants> tenants,
     OutboxDbContextFactory factory,
     IKafkaProducer kafkaProducer,
+    IOptions<KafkaOptions> kafkaOptions,
     IOptions<OutboxOptions> outboxOptions) : BackgroundService
 {
+    private readonly KafkaBootstrapper bootstrapper = new KafkaBootstrapper(
+            bootstrapServers: kafkaOptions.Value.BootstrapServers,
+            logger: bootstrapLogger)
+        .AddTopic("simple-auth.registered-user")
+        .AddTopic("financial-service.account-balance-created");
+    
     protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
+        await bootstrapper.InitializeAsync(cancellationToken);
+        
         while (!cancellationToken.IsCancellationRequested)
         {
             foreach (var tenant in tenants.Value.TenantConfigs)

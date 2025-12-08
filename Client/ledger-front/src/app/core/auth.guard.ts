@@ -15,9 +15,9 @@ export const authGuard: CanActivateFn = async (route, state) => {
         return true;
     }
 
-    if (await authService.refreshToken()){
-        return true;
-    }
+    // if (await authService.refreshToken()){
+    //     return true;
+    // }
 
     router.navigate(['auth/login']);
     return false;

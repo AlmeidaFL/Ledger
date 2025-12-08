@@ -26,6 +26,7 @@ builder.Services.AddHostedService<KafkaWorker>();
 builder.Services.AddScoped<IMessageHandler<UserCreatedEvent>, UserCreatedHandler>();
 builder.Services.AddScoped<IMessageHandler<FinancialAccountCreatedEvent>, FinancialAccountCreatedHandler>();
 builder.Services.AddScoped(typeof(EventExecution<>));
+builder.Services.AddScoped<IKafkaDispatcher, KafkaDispatcher>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<UserDbContext>(options =>

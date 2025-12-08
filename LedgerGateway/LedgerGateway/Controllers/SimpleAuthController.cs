@@ -101,7 +101,7 @@ public class SimpleAuthController(
             client.RefreshAsync(request, ct)
         );
 
-        if (isSpaClient)
+        if (isSpaClient && result.IsSuccess)
         {
             var tokens = result.Value;
             AddCookies(tokens);

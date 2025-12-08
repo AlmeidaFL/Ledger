@@ -4,7 +4,7 @@ namespace SimpleAuth.Api.Model;
 
 public class User
 {
-    public uint RowVersion { get; set; }
+    public uint Version { get; set; }
     public Guid Id { get; set; }
     public string? GoogleId { get; set; }
     public bool IsGoogleUser => GoogleId != null;

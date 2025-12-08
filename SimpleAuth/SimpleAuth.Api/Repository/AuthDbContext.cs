@@ -13,16 +13,14 @@ public class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbContext(
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        builder.Entity<User>()
-            .HasIndex(u => u.Email)
-            .IsUnique();
-        
-        builder.Entity<User>()
-            .Property(u => u.RowVersion)
-            .IsRowVersion();
+        builder.Entity<User>(b =>
+        {
+            b.HasIndex(u => u.Email).IsUnique();
+            b.Property(u => u.Version).IsRowVersion();
+        });
         
         builder.Entity<RefreshToken>()
-            .Property(r => r.RowVersion)
+            .Property(r => r.Version)
             .IsRowVersion();
         
         builder.Entity<OutboxMessage>(b =>

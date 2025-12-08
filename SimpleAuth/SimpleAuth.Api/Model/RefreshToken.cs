@@ -4,7 +4,7 @@ namespace SimpleAuth.Api.Model;
 
 public class RefreshToken
 {
-    public uint RowVersion { get; set; }
+    public uint Version { get; set; }
     public Guid Id { get; set; }
     public Guid UserId { get; set; }
     public User User { get; set; }

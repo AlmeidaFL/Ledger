@@ -20,6 +20,26 @@ services:
       retries: 5
       start_period: 5s
 
+  event-relay-worker:
+    container_name: event-relay-worker
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5005/health/ready"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    depends_on:
+      broker:
+        condition: service_healthy
+    build:
+      context: .
+      dockerfile: EventRelayWorker/Dockerfile
+    environment:
+      Kestrel__Endpoints__Http__Url: http://0.0.0.0:5005
+      Kafka__BootstrapServers: broker:9092
+    networks:
+      - ledger-net
+
   simple-auth:
     image: simple-auth
     container_name: simple-auth
@@ -54,11 +74,15 @@ services:
     image: user-api
     container_name: user-api
     depends_on:
-      - postgres
+      user-api-migrations:
+        condition: service_started
+      event-relay-worker:
+        condition: service_healthy
     build:
       context: .
       dockerfile: UserApi/UserApi/Dockerfile
     environment:
+      Kafka__FinancialAccountCreatedConsumer__BootstrapServers: broker:9092
       OpenTelemetry__ExporterUrl: http://signoz-otel-collector:4317
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://0.0.0.0:5002
@@ -84,11 +108,15 @@ services:
     image: financial-service
     container_name: financial-service
     depends_on:
-      - financial-service-migrations
+      event-relay-worker:
+        condition: service_healthy
+      financial-service-migrations:
+        condition: service_started
     build:
       context: .
       dockerfile: FinancialService/FinancialService/Dockerfile
     environment:
+      Kafka__FinancialAccountCreatedConsumer__BootstrapServers: broker:9092
       ASPNETCORE_Kestrel__Certificates__Default__Path: /app/certs/grpc-dev.pfx
       ASPNETCORE_Kestrel__Certificates__Default__Password: 1234
       OpenTelemetry__ExporterUrl: http://signoz-otel-collector:4317
@@ -98,7 +126,7 @@ services:
     ports:
       - "5003:5003"
     volumes:
-      - "./certs/grpc-dev.pfx:./app/certs/grpc-dev.pfx:ro"
+      - "./certs/grpc-dev.pfx:/app/certs/grpc-dev.pfx:ro"
     networks:
       - signoz-ledger-net
       - ledger-net
@@ -116,6 +144,7 @@ services:
 
   ledger-gateway:
     image: ledger-gateway
+    profiles: ["gateway"]
     container_name: ledger-gateway
     build:
       context: .
@@ -153,6 +182,12 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_NUM_PARTITIONS: 3
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'echo > /dev/tcp/localhost/9092'"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+      start_period: 15s
     ports:
       - "29092:29092"
     volumes:
@@ -165,7 +200,8 @@ services:
     image: provectuslabs/kafka-ui:latest
     container_name: kafka-ui
     depends_on:
-      - broker
+      broker:
+        condition: service_healthy
     ports:
       - "8081:8080"
     environment:
