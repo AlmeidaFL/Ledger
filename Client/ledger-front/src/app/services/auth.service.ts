@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { firstValueFrom } from 'rxjs';
 import { Router } from '@angular/router';
+import { UserService } from './user.service';
 
 interface RegisterRequest {
     email: string;
@@ -30,9 +31,10 @@ interface User {
 export class AuthService {
     private readonly baseUrl = "http://localhost:5000";
 
+    sessionLoaded = signal(false);
     currentUser = signal<User | null>(null);
 
-    constructor(private http: HttpClient, private router: Router) {}
+    constructor(private http: HttpClient, private router: Router, private userService: UserService) {}
 
     async register(request: RegisterRequest): Promise<boolean> {
         try {
@@ -53,15 +55,19 @@ export class AuthService {
                 this.http.post(`${this.baseUrl}/api/auth/login`, request)
             );
 
-            const user = await firstValueFrom(
-                this.http.get<User>(`${this.baseUrl}/api/users?email=${request.email}`)
-            );
+            const user = await this.userService.getMe();
+
+            if (!user){
+                console.error('User not returned after login');
+                return false;
+            }
 
             if (!user.isActive) {
                 console.error('User is not active');
                 return false;
             }
 
+            this.sessionLoaded.set(true);
             this.currentUser.set(user);
             this.router.navigate(['/home']);
             return true;
@@ -70,6 +76,12 @@ export class AuthService {
             console.error('login failed:', err);
             return false;
         }
+    }
+
+    async bootstrapSession() {
+        const user = await this.userService.getMe();
+        this.currentUser.set(user);
+        this.sessionLoaded.set(true);
     }
 
     async logout(): Promise<void> {

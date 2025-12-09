@@ -35,6 +35,23 @@ public class UserApiController(UserApiClient client) : ControllerBase
         return this.FromResult(result);
     }
     
+    [HttpGet("me")]
+    public async Task<ActionResult> Me(CancellationToken ct)
+    {
+        var email = User.FindFirstValue(ClaimTypes.Email);
+
+        if (string.IsNullOrEmpty(email))
+        {
+            return this.FromResult(Result.Failure("Missing email address", ErrorType.Unauthorized));
+        }
+        
+        var result = await RestSafeCaller.Call(() =>
+            client.UserGETAsync(email, ct)
+        );
+
+        return this.FromResult(result);
+    }
+    
     [HttpPut]
     public async Task<ActionResult> UpdateUser([FromQuery] string email, [FromBody] UpdateUserRequest request, CancellationToken ct = default)
     {
