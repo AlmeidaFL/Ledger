@@ -8,3 +8,4 @@ riderModule.iml
 **/launchSettings.json
 *.user
 /signoz/
+node_modules/
