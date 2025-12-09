@@ -34,9 +34,8 @@ services:
     build:
       context: .
       dockerfile: EventRelayWorker/Dockerfile
-    environment:
-      Kestrel__Endpoints__Http__Url: http://0.0.0.0:5005
-      Kafka__BootstrapServers: broker:9092
+    env_file:
+      - ./env/event-relay-worker.env
     networks:
       - ledger-net
 
