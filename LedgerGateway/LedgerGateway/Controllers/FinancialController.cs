@@ -1,4 +1,5 @@
-﻿using LedgerGateway.Dtos;
+﻿using LedgerGateway.Application;
+using LedgerGateway.Dtos;
 using LedgerGateway.Integration;
 using Microsoft.AspNetCore.Authorization;
 
@@ -32,6 +33,7 @@ public class FinancialController(FinancialService.FinancialServiceClient client)
     [HttpPost("deposit")]
     public async Task<IActionResult> DepositAsync([FromBody] DepositRequestDto request, CancellationToken ct)
     {
+        request.UserEmail = User.GetEmailOrThrow();
         var result = await GrpcSafeCaller.Call(async () =>
         {
             var response = await client.DepositAsync(request.ToGrpc(), cancellationToken: ct);
@@ -44,6 +46,7 @@ public class FinancialController(FinancialService.FinancialServiceClient client)
     [HttpPost("transfer")]
     public async Task<IActionResult> TransferAsync([FromBody] TransferRequestDto request,  CancellationToken ct)
     {
+        request.FromAccountEmail = User.GetEmailOrThrow();
         var result = await GrpcSafeCaller.Call(async () =>
         {
             var response = await client.TransferAsync(request.ToGrpc(), cancellationToken: ct);

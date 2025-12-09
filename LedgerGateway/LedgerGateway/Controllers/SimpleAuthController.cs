@@ -112,12 +112,11 @@ public class SimpleAuthController(
 
     [HttpPost("logout")]
     public async Task<ActionResult> Logout(
-        [FromQuery] string userEmail,
         [FromBody] LogoutRequest request,
         CancellationToken ct = default)
     {
         var result = await RestSafeCaller.Call(() =>
-            client.LogoutAsync(userEmail, request, ct)
+            client.LogoutAsync(User.GetEmailOrThrow(), request, ct)
         );
         
         var isSpaClient = Request.Headers.TryGetValue("X-Client-Type", out var value)
@@ -132,11 +131,10 @@ public class SimpleAuthController(
 
     [HttpPost("logout-all")]
     public async Task<ActionResult> LogoutAll(
-        [FromQuery] string userEmail,
         CancellationToken ct = default)
     {
         var result = await RestSafeCaller.Call(() =>
-            client.LogoutAllAsync(userEmail, ct)
+            client.LogoutAllAsync(User.GetEmailOrThrow(), ct)
         );
 
         return this.FromResult(result);

@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using LedgerGateway.Application;
 using LedgerGateway.RestClients.UserApi;
 using Microsoft.AspNetCore.Mvc;
 using ServiceCommons;
@@ -22,12 +23,6 @@ public class UserApiController(UserApiClient client) : ControllerBase
     [HttpGet]
     public async Task<ActionResult> GetUser([FromQuery] string? email, CancellationToken ct)
     {
-        var isSpaClient = Request.Headers.TryGetValue("X-Client-Type", out var value)
-                          && value == "spa";
-        
-        var emailValue = isSpaClient && email is null ?
-            User.FindFirstValue(ClaimTypes.Email) : email;
-        
         var result = await RestSafeCaller.Call(() =>
             client.UserGETAsync(email, ct)
         );
@@ -38,12 +33,7 @@ public class UserApiController(UserApiClient client) : ControllerBase
     [HttpGet("me")]
     public async Task<ActionResult> Me(CancellationToken ct)
     {
-        var email = User.FindFirstValue(ClaimTypes.Email);
-
-        if (string.IsNullOrEmpty(email))
-        {
-            return this.FromResult(Result.Failure("Missing email address", ErrorType.Unauthorized));
-        }
+        var email = User.GetEmailOrThrow();
         
         var result = await RestSafeCaller.Call(() =>
             client.UserGETAsync(email, ct)
@@ -53,8 +43,10 @@ public class UserApiController(UserApiClient client) : ControllerBase
     }
     
     [HttpPut]
-    public async Task<ActionResult> UpdateUser([FromQuery] string email, [FromBody] UpdateUserRequest request, CancellationToken ct = default)
+    public async Task<ActionResult> UpdateUser([FromBody] UpdateUserRequest request, CancellationToken ct = default)
     {
+        var email = User.GetEmailOrThrow();
+        
         var result = await RestSafeCaller.Call(() =>
             client.UserPUTAsync(email, request, ct)
         );
@@ -63,8 +55,10 @@ public class UserApiController(UserApiClient client) : ControllerBase
     }
     
     [HttpDelete]
-    public async Task<ActionResult> Delete([FromQuery] string email, CancellationToken ct = default)
+    public async Task<ActionResult> Delete(CancellationToken ct = default)
     {
+        var email = User.GetEmailOrThrow();
+        
         var result = await RestSafeCaller.Call(() =>
             client.UserDELETEAsync(email, ct)
         );
