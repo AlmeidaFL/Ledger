@@ -8,8 +8,8 @@ public static class TransferConverter
     public static TransferRequest ToGrpc(this TransferRequestDto dto)
         => new TransferRequest
         {
-            FromAccountEmail = dto.FromAccountEmail,
-            ToAccountEmail = dto.ToAccountEmail,
+            FromAccountEmail = dto.FromUserEmail,
+            ToAccountEmail = dto.ToUserEmail,
             Amount = dto.Amount,
             Currency = dto.Currency,
             IdempotencyKey = dto.IdempotencyKey,

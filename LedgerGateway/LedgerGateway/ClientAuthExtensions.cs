@@ -19,7 +19,7 @@ public static class ClientAuthExtensions
             .AddJwtBearer(options =>
             {
                 options.Events = new JwtBearerEvents
-                {
+                {   
                     OnMessageReceived = context =>
                     {
                         var authHeader = context.Request.Headers.Authorization.FirstOrDefault();
@@ -46,9 +46,9 @@ public static class ClientAuthExtensions
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
                     ValidateAudience = true,
                     ValidAudience = audience,
-                    ValidateIssuer = true,
+                    ValidateIssuer = false,
                     ValidIssuer = issuer,
-                    ValidateLifetime = true,
+                    ValidateLifetime = false,
                     ClockSkew = TimeSpan.Zero
                 };
             });

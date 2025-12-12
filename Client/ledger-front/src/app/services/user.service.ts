@@ -22,7 +22,7 @@ export class UserService {
 
     async getMe(): Promise<User | null> {
         try {
-            const user = await firstValueFrom(this.http.get<User>(`${this.baseUrl}/me`));
+            const user = await firstValueFrom(this.http.get<User>(`${this.baseUrl}/me`, {withCredentials: true}));
 
             return user;
 

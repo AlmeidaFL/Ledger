@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FinancialService } from '../../services/financial.service';
+import { CurrencyPipe } from '@angular/common';
 
 @Component({
   selector: 'app-home',
-  imports: [],
+  imports: [CurrencyPipe],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })

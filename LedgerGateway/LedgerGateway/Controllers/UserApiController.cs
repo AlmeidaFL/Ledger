@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using LedgerGateway.Application;
 using LedgerGateway.RestClients.UserApi;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ServiceCommons;
 
@@ -30,6 +31,7 @@ public class UserApiController(UserApiClient client) : ControllerBase
         return this.FromResult(result);
     }
     
+    [Authorize]
     [HttpGet("me")]
     public async Task<ActionResult> Me(CancellationToken ct)
     {

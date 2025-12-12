@@ -38,7 +38,7 @@ export class AuthService {
 
     async register(request: RegisterRequest): Promise<boolean> {
         try {
-            await firstValueFrom(this.http.post(`${this.baseUrl}/api/auth/register`, request));
+            await firstValueFrom(this.http.post(`${this.baseUrl}/api/auth/register`, request, {withCredentials: true}));
 
             this.router.navigate(['/login']);
             return true;
@@ -52,7 +52,7 @@ export class AuthService {
     async login(request: LoginRequest): Promise<boolean> {
         try {
             await firstValueFrom(
-                this.http.post(`${this.baseUrl}/api/auth/login`, request)
+                this.http.post(`${this.baseUrl}/api/auth/login`, request, {withCredentials: true})
             );
 
             const user = await this.userService.getMe();
@@ -86,7 +86,7 @@ export class AuthService {
 
     async logout(): Promise<void> {
         try {
-            await firstValueFrom(this.http.post(`${this.baseUrl}/api/auth/logout`, {}));
+            await firstValueFrom(this.http.post(`${this.baseUrl}/api/auth/logout`, {}, {withCredentials: true}));
             
         } catch (err) {
             console.error('logout failed:', err);
@@ -98,7 +98,7 @@ export class AuthService {
 
     async loadMe(): Promise<boolean> {
         try {
-            const user = await firstValueFrom(this.http.get<User>(`${this.baseUrl}/api/users?email=`));
+            const user = await firstValueFrom(this.http.get<User>(`${this.baseUrl}/api/users?email=`, {withCredentials: true}));
 
             this.currentUser.set(user);
             return true;
@@ -110,7 +110,7 @@ export class AuthService {
 
     async refreshToken(): Promise<boolean> {
         try {
-            await firstValueFrom(this.http.post(`${this.baseUrl}/api/auth/refresh`, {}));
+            await firstValueFrom(this.http.post(`${this.baseUrl}/api/auth/refresh`, {}, {withCredentials: true}));
         } catch (err) {
             console.error('refresh failed:', err);
             return false;

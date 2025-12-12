@@ -9,7 +9,6 @@ interface DepositReponse {
 }
 
 export interface DepositRequest {
-    userEmail: string;
     amount: number; 
     currency: string; 
     idempotencyKey: string;
@@ -19,7 +18,8 @@ export interface TransferRequest {
     toUserEmail: string;
     amount: number;
     currency: string;
-    idempotencyKey: string
+    idempotencyKey: string,
+    metadata: string
 }
 
 interface TransferResponse {
@@ -45,7 +45,7 @@ export class FinancialService {
     async deposit(request: DepositRequest): Promise<DepositReponse | null> {
         try{
             const response = await firstValueFrom(
-                this.http.post<DepositReponse>(`${this.baseUrl}/deposit`, request))
+                this.http.post<DepositReponse>(`${this.baseUrl}/deposit`, request, {withCredentials: true}))
 
             return response
         } catch (exception) {
@@ -57,7 +57,7 @@ export class FinancialService {
     async transfer(request: TransferRequest): Promise<boolean> {
         try{
             await firstValueFrom(
-                this.http.post<TransferResponse>(`${this.baseUrl}/transfer`, request))
+                this.http.post<TransferResponse>(`${this.baseUrl}/transfer`, request, {withCredentials: true}))
 
             return true;
         } catch (exception) {
@@ -69,7 +69,7 @@ export class FinancialService {
     async getBalance(): Promise<BalanceResponse | null> {
         try{
             return await firstValueFrom(
-                this.http.get<BalanceResponse>(`${this.baseUrl}/balance`, ))
+                this.http.get<BalanceResponse>(`${this.baseUrl}/balance`, {withCredentials: true}))
 
         } catch (exception) {
             console.error("Get Balance failed");

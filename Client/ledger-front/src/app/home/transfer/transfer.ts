@@ -40,6 +40,8 @@ export class TransferComponent {
       toUserEmail: this.form.value.toEmail,
       amount: cents,
       idempotencyKey: uuidv4(),
+      currency: "BRL",
+      metadata: this.form.value.description
     } as TransferRequest;
 
     await this.financialService.transfer(submittedValue)

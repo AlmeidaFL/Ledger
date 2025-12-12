@@ -45,7 +45,6 @@ export class Deposit {
     }
 
     const request = {
-      userEmail: user.email,
       amount: cents,
       currency: "BRL",
       idempotencyKey: uuidv4()

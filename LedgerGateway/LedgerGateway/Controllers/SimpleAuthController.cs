@@ -27,56 +27,56 @@ public class SimpleAuthController(
         return this.FromResult(result);
     }
 
-    [HttpPost("login")]
-    public async Task<ActionResult> Login(
-        [FromBody] LoginRequestDto dto,
-        CancellationToken ct = default)
-    {
-        var userAgentInfo = GetUserAgentInfoDto().ToUserAgentInfo();
-        var loginRequest = dto.Convert();
-        loginRequest.UserAgentInfo = userAgentInfo;
-    
-        var result = await RestSafeCaller.Call(() =>
-            client.LoginAsync(loginRequest, ct)
-        );
-
-        var isSpaClient = Request.Headers.TryGetValue("X-Client-Type", out var value)
-                          && value == "spa";
-        if (isSpaClient)
+        [HttpPost("login")]
+        public async Task<ActionResult> Login(
+            [FromBody] LoginRequestDto dto,
+            CancellationToken ct = default)
         {
-            var tokens = result.Value;
-            AddCookies(tokens);
+            var userAgentInfo = GetUserAgentInfoDto().ToUserAgentInfo();
+            var loginRequest = dto.Convert();
+            loginRequest.UserAgentInfo = userAgentInfo;
+        
+            var result = await RestSafeCaller.Call(() =>
+                client.LoginAsync(loginRequest, ct)
+            );
+
+            var isSpaClient = Request.Headers.TryGetValue("X-Client-Type", out var value)
+                              && value == "spa";
+            if (isSpaClient && result.IsSuccess)
+            {
+                var tokens = result.Value;
+                AddCookies(tokens);
+            }
+
+            return this.FromResult(result);
         }
 
-        return this.FromResult(result);
-    }
-
-    private void AddCookies(Credentials? tokens)
-    {
-        Response.Cookies.Append(
-            "refresh_token",
-            tokens!.RefreshToken,
-            new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict,
-                Path = "/"
-            }
-        );
-        
-        Response.Cookies.Append(
-            "access_token",
-            tokens!.RefreshToken,
-            new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict,
-                Path = "/"
-            }
-        );
-    }
+        private void AddCookies(Credentials? tokens)
+        {
+            Response.Cookies.Append(
+                "refresh_token",
+                tokens!.RefreshToken,
+                new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = Request.IsHttps,
+                    SameSite = SameSiteMode.Lax,
+                    Path = "/"
+                }
+            );
+            
+            Response.Cookies.Append(
+                "access_token",
+                tokens!.AccessToken,
+                new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = Request.IsHttps,
+                    SameSite = SameSiteMode.Lax,
+                    Path = "/"
+                }
+            );
+        }
 
     [HttpPost("refresh")]
     public async Task<ActionResult> Refresh(

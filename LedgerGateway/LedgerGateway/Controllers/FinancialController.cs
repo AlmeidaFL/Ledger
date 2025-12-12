@@ -9,6 +9,7 @@ using FinancialService;
 using Microsoft.AspNetCore.Mvc;
 using ServiceCommons;
 
+[Authorize]
 [ApiController]
 [Route("api/financial")]
 public class FinancialController(FinancialService.FinancialServiceClient client) : ControllerBase
@@ -46,7 +47,7 @@ public class FinancialController(FinancialService.FinancialServiceClient client)
     [HttpPost("transfer")]
     public async Task<IActionResult> TransferAsync([FromBody] TransferRequestDto request,  CancellationToken ct)
     {
-        request.FromAccountEmail = User.GetEmailOrThrow();
+        request.FromUserEmail = User.GetEmailOrThrow();
         var result = await GrpcSafeCaller.Call(async () =>
         {
             var response = await client.TransferAsync(request.ToGrpc(), cancellationToken: ct);

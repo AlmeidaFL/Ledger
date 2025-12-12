@@ -5,8 +5,8 @@ namespace LedgerGateway.Dtos;
 public class TransferRequestDto
 {
     [JsonIgnore]
-    public string FromAccountEmail { get; set; }
-    public string ToAccountEmail { get; set; }
+    public string? FromUserEmail { get; set; }
+    public string ToUserEmail { get; set; }
     public long Amount { get; set; }
     public string Currency { get; set; }
     public string IdempotencyKey { get; set; }
