@@ -7,7 +7,8 @@ namespace FinancialService.Grpc;
 
 public class FinancialService(
     IDepositService depositService,
-    ITransferService transferService) 
+    ITransferService transferService,
+    IBalanceService balanceService) 
     : global::FinancialService.FinancialService.FinancialServiceBase
 {
     public override Task<TestRequest> Test(TestRequest request, ServerCallContext context)
@@ -66,6 +67,26 @@ public class FinancialService(
             TransactionId = result.Value?.TransactionId.ToString() ?? string.Empty,
             Status = status,
             IsIdempotentReplay = result.Value?.IsIdempotentReplay ?? false,
+            Result = new Result
+            {
+                ErrorMessage = result.Error ?? string.Empty,
+                IsSuccess = result.IsSuccess,
+                ErrorType = result.ErrorType?.ToString() ?? string.Empty,
+            }
+        };
+    }
+
+    public override async Task<GetBalanceResponse> GetBalance(GetBalanceRequest request, ServerCallContext context)
+    {
+        var result = await balanceService.GetBalance(
+            userEmail: request.UserEmail,
+            context.CancellationToken);
+        
+        return new GetBalanceResponse
+        {
+            UserEmail = result.Value?.UserEmail ?? string.Empty,
+            Currency = result.Value?.Currency ?? string.Empty,
+            BalanceInCents = result.Value?.BalanceInCents ?? 0,
             Result = new Result
             {
                 ErrorMessage = result.Error ?? string.Empty,

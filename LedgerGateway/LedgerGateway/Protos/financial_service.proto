@@ -7,6 +7,7 @@ package financial;
 service FinancialService {
   rpc Deposit (DepositRequest) returns (DepositResponse);
   rpc Transfer (TransferRequest) returns (TransferResponse);
+  rpc GetBalance (GetBalanceRequest) returns (GetBalanceResponse);
   rpc Test (TestRequest) returns (TestRequest);
 }
 
@@ -48,3 +49,14 @@ message TransferResponse {
   bool is_idempotent_replay = 3;
   Result result = 4;
 }
+
+message GetBalanceRequest {
+  string user_email = 1;
+}
+
+message GetBalanceResponse {
+  string user_email = 1;
+  int64 balance_in_cents = 2;
+  string currency = 3;
+  Result result = 4;
+} 

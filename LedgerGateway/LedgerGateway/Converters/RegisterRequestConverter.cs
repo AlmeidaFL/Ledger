@@ -1,7 +1,7 @@
 ﻿using LedgerGateway.Dtos;
 using LedgerGateway.RestClients.SimpleAuth;
 
-namespace LedgerGateway.Integration;
+namespace LedgerGateway.Converters;
 
 public static class RegisterRequestConverter
 {

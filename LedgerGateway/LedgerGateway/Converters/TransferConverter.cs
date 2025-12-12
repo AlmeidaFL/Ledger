@@ -1,7 +1,7 @@
 ﻿using FinancialService;
 using LedgerGateway.Dtos;
 
-namespace LedgerGateway.Integration;
+namespace LedgerGateway.Converters;
 
 public static class TransferConverter
 {

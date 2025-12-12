@@ -22,6 +22,7 @@ public interface ITransferService
 public class TransferService(
     ILogger<TransferService> logger,
     IAccountLockService accountLockService,
+    IBalanceService balanceService,
     FinancialDbContext db) : ITransferService
 {
     public async Task<Result<TransferResult>> TransferAsync(
@@ -66,6 +67,7 @@ public class TransferService(
             return await ProcessTransferAsync(
                 fromAccount.Id, 
                 toAccount.Id, 
+                fromAccountEmail,
                 amount, 
                 currency, 
                 idempotencyKey,
@@ -83,6 +85,7 @@ public class TransferService(
     private async Task<Result<TransferResult>> ProcessTransferAsync(
         Guid fromAccountId,
         Guid toAccountId,
+        string fromUserEmail,
         long amount,
         string currency,
         string idempotencyKey,
@@ -92,9 +95,14 @@ public class TransferService(
 
         await accountLockService.LockAccountsAsync(fromAccountId, toAccountId, cancellationToken);
 
-        var balance = await CalculateBalanceAsync(fromAccountId, cancellationToken);
+        var balance = await balanceService.GetBalance(fromUserEmail, cancellationToken);
+
+        if (balance.IsFailure)
+        {
+            return Result<TransferResult>.Failure(balance);
+        }
         
-        if (balance < amount)
+        if (balance.Value!.BalanceInCents < amount)
         {
             await tx.RollbackAsync(cancellationToken);
 

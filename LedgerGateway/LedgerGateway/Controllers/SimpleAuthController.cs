@@ -1,6 +1,6 @@
 ﻿using LedgerGateway.Application;
+using LedgerGateway.Converters;
 using LedgerGateway.Dtos;
-using LedgerGateway.Integration;
 using LedgerGateway.RestClients.SimpleAuth;
 
 namespace LedgerGateway.Controllers;

@@ -14,6 +14,25 @@ export interface DepositRequest {
     currency: string; 
     idempotencyKey: string;
 }
+
+export interface TransferRequest {
+    toUserEmail: string;
+    amount: number;
+    currency: string;
+    idempotencyKey: string
+}
+
+interface TransferResponse {
+    transactionId: string;
+    status: string;
+    isIdempotentReplay: boolean
+}
+
+interface BalanceResponse {
+    amount: number;
+    userEmail: string;
+    currency: string;
+}
     
 @Injectable({
   providedIn: 'root'
@@ -31,6 +50,29 @@ export class FinancialService {
             return response
         } catch (exception) {
             console.error("Deposit failed");
+            return null;
+        }
+    }
+
+    async transfer(request: TransferRequest): Promise<boolean> {
+        try{
+            await firstValueFrom(
+                this.http.post<TransferResponse>(`${this.baseUrl}/transfer`, request))
+
+            return true;
+        } catch (exception) {
+            console.error("Transfer failed");
+            return false;
+        }
+    }
+
+    async getBalance(): Promise<BalanceResponse | null> {
+        try{
+            return await firstValueFrom(
+                this.http.get<BalanceResponse>(`${this.baseUrl}/balance`, ))
+
+        } catch (exception) {
+            console.error("Get Balance failed");
             return null;
         }
     }

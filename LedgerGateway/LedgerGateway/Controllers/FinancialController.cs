@@ -1,6 +1,6 @@
 ﻿using LedgerGateway.Application;
+using LedgerGateway.Converters;
 using LedgerGateway.Dtos;
-using LedgerGateway.Integration;
 using Microsoft.AspNetCore.Authorization;
 
 namespace LedgerGateway.Controllers;
@@ -50,6 +50,22 @@ public class FinancialController(FinancialService.FinancialServiceClient client)
         var result = await GrpcSafeCaller.Call(async () =>
         {
             var response = await client.TransferAsync(request.ToGrpc(), cancellationToken: ct);
+            return ResultConverter.Convert(response.Result, response.ToDto());
+        });
+
+        return this.FromResult(result);
+    }
+    
+    [HttpGet("balance")]
+    public async Task<IActionResult> GetBalanceAsync(CancellationToken ct)
+    {
+        var request = new GetBalanceRequest
+        {
+            UserEmail = User.GetEmailOrThrow()
+        };
+        var result = await GrpcSafeCaller.Call(async () =>
+        {
+            var response = await client.GetBalanceAsync(request, cancellationToken: ct);
             return ResultConverter.Convert(response.Result, response.ToDto());
         });
 

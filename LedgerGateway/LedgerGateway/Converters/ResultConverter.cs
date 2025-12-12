@@ -1,7 +1,7 @@
 ﻿using ServiceCommons;
 using Result = FinancialService.Result;
 
-namespace LedgerGateway.Integration;
+namespace LedgerGateway.Converters;
 
 public static class ResultConverter
 {

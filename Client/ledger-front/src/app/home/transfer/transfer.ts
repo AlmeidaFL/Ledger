@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FinancialService, TransferRequest } from '../../services/financial.service';
+import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   selector: 'app-transfer',
@@ -12,20 +14,15 @@ export class TransferComponent {
 
   form: FormGroup;
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(private formBuilder: FormBuilder, private financialService: FinancialService) {
     this.form = this.formBuilder.group({
-    fromEmail: [{ value: this.userEmail, disabled: true }],
     toEmail: ['', [Validators.required, Validators.email]],
     amount: ['', [Validators.required]],
     description: ['']
   });
   }
 
-  userEmail = "user@example.com";
-
-  submittedValue: any = null;
-
-  submit() {
+  async submit() {
     if (this.form.invalid) return;
 
     const rawAmount = this.form.value.amount!;
@@ -39,13 +36,12 @@ export class TransferComponent {
 
     const cents = Math.round(floatValue * 100);
 
-    this.submittedValue = {
-      from: this.userEmail,
-      to: this.form.value.toEmail,
-      amountInCents: cents,
-      description: this.form.value.description || null,
-    };
+    const submittedValue = {
+      toUserEmail: this.form.value.toEmail,
+      amount: cents,
+      idempotencyKey: uuidv4(),
+    } as TransferRequest;
 
-    console.log("Prepared transfer:", this.submittedValue);
+    await this.financialService.transfer(submittedValue)
   }
 }

@@ -20,6 +20,7 @@ builder.Services.AddScoped<IUserCreatedHandler, UserCreatedHandler>();
 builder.Services.AddScoped<IDepositService, DepositService>();
 builder.Services.AddScoped<ITransferService, TransferService>();
 builder.Services.AddScoped<IAccountLockService, AccountLockService>();
+builder.Services.AddScoped<IBalanceService, BalanceService>();
 
 builder.Services.AddHealthChecks();
 
