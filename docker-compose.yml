@@ -209,6 +209,16 @@ services:
     networks:
       - ledger-net
 
+  front-end:
+    build:
+      context: Client/ledger-front
+      dockerfile: Dockerfile
+    container_name: front_end
+    ports:
+      - "5006:80"
+    networks:
+      - ledger-net
+
     # open-telemetry-collector:
     #   image: otel/opentelemetry-collector-contrib:0.130.1
     #   containar_name: open-telemetry-collector
