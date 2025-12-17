@@ -44,6 +44,12 @@ export class TransferComponent {
       metadata: this.form.value.description
     } as TransferRequest;
 
-    await this.financialService.transfer(submittedValue)
+    const transferred = await this.financialService.transfer(submittedValue)
+    if (transferred){
+      alert(transferred.status)
+      return;
+    }
+
+    alert("Money wasn't trasnferred")
   }
 }

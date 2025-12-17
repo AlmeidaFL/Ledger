@@ -53,7 +53,7 @@ export class Deposit {
     const response = await this.financialService.deposit(request);
 
     if (response) {
-      alert("Deposit successful!");
+      alert(response.status);
     } else {
       alert("Deposit failed!");
     }

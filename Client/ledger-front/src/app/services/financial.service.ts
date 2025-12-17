@@ -49,20 +49,18 @@ export class FinancialService {
 
             return response
         } catch (exception) {
-            console.error("Deposit failed");
             return null;
         }
     }
 
-    async transfer(request: TransferRequest): Promise<boolean> {
+    async transfer(request: TransferRequest): Promise<TransferResponse | null> {
         try{
-            await firstValueFrom(
+            const response = await firstValueFrom(
                 this.http.post<TransferResponse>(`${this.baseUrl}/transfer`, request, {withCredentials: true}))
 
-            return true;
+            return response;
         } catch (exception) {
-            console.error("Transfer failed");
-            return false;
+            return null;
         }
     }
 
@@ -72,7 +70,6 @@ export class FinancialService {
                 this.http.get<BalanceResponse>(`${this.baseUrl}/balance`, {withCredentials: true}))
 
         } catch (exception) {
-            console.error("Get Balance failed");
             return null;
         }
     }
