@@ -21,6 +21,7 @@ services:
       start_period: 5s
 
   event-relay-worker:
+    image: event-relay-worker
     container_name: event-relay-worker
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5005/health/ready"]
@@ -210,10 +211,11 @@ services:
       - ledger-net
 
   front-end:
+    image: front-end
+    container_name: front-end
     build:
       context: Client/ledger-front
       dockerfile: Dockerfile
-    container_name: front_end
     ports:
       - "5006:80"
     networks:

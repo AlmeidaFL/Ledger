@@ -17,7 +17,7 @@ spec:
       serviceAccountName: ledger-waiter
       initContainers:
         - name: wait-for-migrations
-          image: bitnami/kubectl:1.30
+          image: bitnami/kubectl:latest
           command:
             - sh
             - -c
@@ -28,7 +28,7 @@ spec:
                 job/financial-service-migrations \
                 --timeout=30s
         - name: wait-for-event-relay-worker
-          image: bitnami/kubectl:1.30
+          image: bitnami/kubectl:latest
           command:
             - sh
             - -c
@@ -43,14 +43,14 @@ spec:
           image: financial-service
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 5003
+            - containerPort: 8080
           envFrom:
             - configMapRef:
                 name: financial-service
           readinessProbe:
             httpGet:
               path: /health
-              port: 5003
+              port: 8080
             initialDelaySeconds: 10
             periodSeconds: 5
 
@@ -66,7 +66,7 @@ spec:
     spec:
       initContainers:
         - name: wait-for-postgres
-          image: busybox:1.36
+          image: busybox:latest
           command:
             - sh
             - -c
@@ -101,7 +101,7 @@ spec:
     - name: http
       protocol: TCP
       port: 5003
-      targetPort: 5003
+      targetPort: 8080
 
 ---
 
@@ -110,10 +110,9 @@ kind: ConfigMap
 metadata:
   name: financial-service
 data:
-  Kafka__FinancialAccountCreatedConsumer__BootstrapServers: broker:9092
-  ASPNETCORE_Kestrel__Certificates__Default__Path: /app/certs/grpc-dev.pfx
-  ASPNETCORE_Kestrel__Certificates__Default__Password: 1234
-  OpenTelemetry__ExporterUrl: http://signoz-otel-collector:4317
-  ASPNETCORE_ENVIRONMENT: Development
-  ASPNETCORE_URLS: http://0.0.0.0:5003
+  Kafka__FinancialAccountCreatedConsumer__BootstrapServers: "broker:9092"
+  ASPNETCORE_Kestrel__Certificates__Default__Path: "/app/certs/grpc-dev.pfx"
+  ASPNETCORE_Kestrel__Certificates__Default__Password: "1234"
+  OpenTelemetry__ExporterUrl: "http://signoz-otel-collector:4317"
+  ASPNETCORE_ENVIRONMENT: "Development"
   ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=financialservice;Username=postgres;Password=postgres"

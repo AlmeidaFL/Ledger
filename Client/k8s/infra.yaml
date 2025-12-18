@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ledger-frontend
+  name: front-end
   labels:
-    app: ledger-frontend
+    app: front-end
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ledger-frontend
+      app: front-end
   template:
     metadata:
       labels:
-        app: ledger-frontend
+        app: front-end
     spec:
       containers:
-        - name: ledger-frontend
-          image: ledger-frontend
+        - name: front-end
+          image: front-end
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
@@ -26,11 +26,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: ledger-frontend
+  name: front-end
 spec:
   type: NodePort
   selector:
-    app: ledger-frontend
+    app: front-end
   ports:
     - name: http
       port: 80
