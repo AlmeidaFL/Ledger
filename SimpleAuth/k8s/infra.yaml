@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: user-api
+  name: simple-auth
   labels:
-    app: user-api
+    app: simple-auth
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: user-api
+      app: simple-auth
   template:
     metadata:
       labels:
-        app: user-api
+        app: simple-auth
     spec:
       serviceAccountName: ledger-waiter
       initContainers:
@@ -22,10 +22,10 @@ spec:
             - sh
             - -c
             - |
-              echo "Waiting for user-api-migrations job to complete..."
+              echo "Waiting for simple-auth-migrations job to complete..."
               kubectl wait \
                 --for=condition=complete \
-                job/user-api-migrations \
+                job/simple-auth-migrations \
                 --timeout=30s
         - name: wait-for-event-relay-worker
           image: bitnami/kubectl:1.30
@@ -39,18 +39,18 @@ spec:
                 pod -l app=event-relay-worker \
                 --timeout=30s
       containers:
-        - name: user-api
-          image: user-api
+        - name: simple-auth
+          image: simple-auth
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 5002
+            - containerPort: 5001
           envFrom:
             - configMapRef:
-                name: user-api
+                name: simple-auth
           readinessProbe:
             httpGet:
               path: /health
-              port: 5002
+              port: 5001
             initialDelaySeconds: 10
             periodSeconds: 5
 
@@ -59,7 +59,7 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: user-api-migrations
+  name: simple-auth-migrations
 spec:
   backoffLimit: 3
   template:
@@ -78,40 +78,39 @@ spec:
               done
               echo "Postgres is ready"
       containers:
-        - name: user-api-migrations
-          image: user-api
-          command: ["dotnet", "UserApi.MigrationsRunner.dll"]
+        - name: simple-auth-migrations
+          image: simple-auth
+          command: ["dotnet", "SimpleAuth.MigrationsRunner.dll"]
           env:
             - name: ConnectionStrings__DefaultConnection
-              value: "Host=postgres;Port=5432;Database=userdb;Username=postgres;Password=postgres"
+              value: "Host=postgres;Port=5432;Database=simpleauth;Username=postgres;Password=postgres"
 
 ---
 
 apiVersion: v1
 kind: Service
 metadata:
-  name: user-api
+  name: simple-auth
   labels:
-    app: user-api
+    app: simple-auth
 spec:
   type: ClusterIP
   selector:
-    app: user-api
+    app: simple-auth
   ports:
     - name: http
       protocol: TCP
-      port: 5002
-      targetPort: 5002
+      port: 5001
+      targetPort: 5001
 
 ---
 
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: user-api
+  name: simple-auth
 data:
-  Kafka__FinancialAccountCreatedConsumer__BootstrapServers: broker:9092
   OpenTelemetry__ExporterUrl: http://signoz-otel-collector:4317
   ASPNETCORE_ENVIRONMENT: Development
-  ASPNETCORE_URLS: http://0.0.0.0:5002
-  ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=userdb;Username=postgres;Password=postgres"
+  ASPNETCORE_URLS: "http://0.0.0.0:5001"
+  ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=simpleauth;Username=postgres;Password=postgres"

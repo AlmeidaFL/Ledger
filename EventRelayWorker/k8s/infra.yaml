@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: event-relay-worker
+data:
+  TENANTS__TENANTCONFIGS__1__NAME: FinancialService
+  TENANTS__TENANTCONFIGS__1__CONNECTIONSTRING: Host=postgres;Port=5432;Database=financialservice;Username=postgres;Password=postgres
+  TENANTS__TENANTCONFIGS__1__OUTBOXTABLE: OutboxMessages
+
+  TENANTS__TENANTCONFIGS__2__NAME: SimpleAuth
+  TENANTS__TENANTCONFIGS__2__CONNECTIONSTRING: Host=postgres;Port=5432;Database=simpleauth;Username=postgres;Password=postgres
+  TENANTS__TENANTCONFIGS__2__OUTBOXTABLE: OutboxMessages
+
+  Kestrel__Endpoints__Http__Url: http://0.0.0.0:5005
+  Kafka__BootstrapServers: broker:9092
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: event-relay-worker
+  labels:
+    app: event-relay-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: event-relay-worker
+  template:
+    metadata:
+      labels:
+        app: event-relay-worker
+    spec:
+      initContainers:
+        - name: wait-for-kafka
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for Kafka..."
+              until nc -z broker 9092; do sleep 3; done
+              echo "Kafka ready"
+      containers:
+        - name: event-relay-worker
+          image: event-relay-worker
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5005
+          envFrom:
+            - configMapRef:
+                name: event-relay-worker
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: 5005
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 5
