@@ -47,8 +47,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddHealthChecks()
-    .AddCheck("self", () => HealthCheckResult.Healthy(), tags: ["live"])
-    .AddDbContextCheck<UserDbContext>("ready", tags: ["ready"]);
+    .AddCheck("self", () => HealthCheckResult.Healthy(), tags: ["live"]);
 
 var app = builder.Build();
 
