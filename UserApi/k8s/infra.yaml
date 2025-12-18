@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-api
+  labels:
+    app: user-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-api
+  template:
+    metadata:
+      labels:
+        app: user-api
+    spec:
+      serviceAccountName: ledger-waiter
+      initContainers:
+        - name: wait-for-migrations
+          image: bitnami/kubectl:1.30
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for user-api-migrations job to complete..."
+              kubectl wait \
+                --for=condition=complete \
+                job/user-api-migrations \
+                --timeout=30s
+        - name: wait-for-event-relay-worker
+          image: bitnami/kubectl:1.30
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for event-relay-worker to be Ready..."
+              kubectl wait \
+                --for=condition=ready \
+                pod -l app=event-relay-worker \
+                --timeout=30s
+      containers:
+        - name: user-api
+          image: user-api
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5002
+          envFrom:
+            - configMapRef:
+                name: user-api
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5002
+            initialDelaySeconds: 10
+            periodSeconds: 5
+
+---
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: user-api-migrations
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: user-api-migrations
+          image: user-api
+          command: ["dotnet", "UserApi.MigrationsRunner.dll"]
+          env:
+            - name: ConnectionStrings__DefaultConnection
+              value: "Host=postgres;Port=5432;Database=userdb;Username=postgres;Password=postgres"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-api
+  labels:
+    app: user-api
+spec:
+  type: ClusterIP
+  selector:
+    app: user-api
+  ports:
+    - name: http
+      protocol: TCP
+      port: 5002
+      targetPort: 5002
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: user-api
+data:
+  Kafka__FinancialAccountCreatedConsumer__BootstrapServers: broker:9092
+  OpenTelemetry__ExporterUrl: http://signoz-otel-collector:4317
+  ASPNETCORE_ENVIRONMENT: Development
+  ASPNETCORE_URLS: http://0.0.0.0:5002
+  ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=userdb;Username=postgres;Password=postgres"
