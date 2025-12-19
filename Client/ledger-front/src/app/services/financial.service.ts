@@ -38,7 +38,7 @@ interface BalanceResponse {
   providedIn: 'root'
 })
 export class FinancialService {
-    private readonly baseUrl = "http://localhost:5000/api/financial";
+    private readonly baseUrl = "api/financial";
 
     constructor(private http: HttpClient) {}
 

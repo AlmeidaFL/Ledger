@@ -41,7 +41,7 @@ spec:
       containers:
         - name: simple-auth
           image: simple-auth
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:

@@ -17,12 +17,10 @@ spec:
       containers:
         - name: ledger-gateway
           image: ledger-gateway
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:
-            - name: Integration__UserApi__BaseUrl
-              value: http://user-api.default.svc.cluster.local:5002
             - name: OpenTelemetry__ExporterUrl
               value: http://signoz-otel-collector:4317
             - name: ASPNETCORE_ENVIRONMENT
@@ -48,11 +46,11 @@ kind: Service
 metadata:
   name: ledger-gateway
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: ledger-gateway
   ports:
     - name: http
       port: 5000
       targetPort: 8080
-      nodePort: 30050
+      protocol: TCP

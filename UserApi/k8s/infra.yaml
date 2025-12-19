@@ -41,7 +41,7 @@ spec:
       containers:
         - name: user-api
           image: user-api
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:

@@ -1,6 +1,5 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { environment } from '../../environments/environment';
 import { firstValueFrom } from 'rxjs';
 import { Router } from '@angular/router';
 import { UserService } from './user.service';
@@ -29,7 +28,7 @@ interface User {
   providedIn: 'root'
 })
 export class AuthService {
-    private readonly baseUrl = "http://localhost:5000";
+    private readonly baseUrl = "/api/auth";
 
     sessionLoaded = signal(false);
     currentUser = signal<User | null>(null);
@@ -38,7 +37,7 @@ export class AuthService {
 
     async register(request: RegisterRequest): Promise<boolean> {
         try {
-            await firstValueFrom(this.http.post(`${this.baseUrl}/api/auth/register`, request, {withCredentials: true}));
+            await firstValueFrom(this.http.post(`${this.baseUrl}/register`, request, {withCredentials: true}));
 
             this.router.navigate(['/login']);
             return true;
@@ -52,7 +51,7 @@ export class AuthService {
     async login(request: LoginRequest): Promise<boolean> {
         try {
             await firstValueFrom(
-                this.http.post(`${this.baseUrl}/api/auth/login`, request, {withCredentials: true})
+                this.http.post(`${this.baseUrl}/login`, request, {withCredentials: true})
             );
 
             const user = await this.userService.getMe();
@@ -86,7 +85,7 @@ export class AuthService {
 
     async logout(): Promise<void> {
         try {
-            await firstValueFrom(this.http.post(`${this.baseUrl}/api/auth/logout`, {}, {withCredentials: true}));
+            await firstValueFrom(this.http.post(`${this.baseUrl}/logout`, {}, {withCredentials: true}));
             
         } catch (err) {
             console.error('logout failed:', err);
@@ -98,7 +97,7 @@ export class AuthService {
 
     async loadMe(): Promise<boolean> {
         try {
-            const user = await firstValueFrom(this.http.get<User>(`${this.baseUrl}/api/users?email=`, {withCredentials: true}));
+            const user = await firstValueFrom(this.http.get<User>(`${this.baseUrl}/users?email=`, {withCredentials: true}));
 
             this.currentUser.set(user);
             return true;
@@ -110,7 +109,7 @@ export class AuthService {
 
     async refreshToken(): Promise<boolean> {
         try {
-            await firstValueFrom(this.http.post(`${this.baseUrl}/api/auth/refresh`, {}, {withCredentials: true}));
+            await firstValueFrom(this.http.post(`${this.baseUrl}/refresh`, {}, {withCredentials: true}));
         } catch (err) {
             console.error('refresh failed:', err);
             return false;
