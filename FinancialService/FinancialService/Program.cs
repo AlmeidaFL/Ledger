@@ -2,11 +2,20 @@ using FinancialService.Application;
 using FinancialService.Application.Services;
 using FinancialService.Messaging;
 using FinancialService.Repository;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using ServiceCommons.ApiKey;
 using ServiceCommons.OpenTelemetry;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(8080, listenOptions =>
+    {
+        listenOptions.Protocols = HttpProtocols.Http2;
+    });
+});
 
 builder.Services.AddAspNetTelemetry(builder.Configuration);
 builder.Services.Configure<KafkaUserCreatedConsumerSettings>(

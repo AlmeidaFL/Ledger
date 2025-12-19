@@ -44,6 +44,9 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
+          env:
+            - name: Logging__LogLevel__Microsoft.AspNetCore
+              value: Information
           envFrom:
             - configMapRef:
                 name: user-api

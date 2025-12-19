@@ -8,6 +8,7 @@ echo "==> Tearing down Ledger cluster"
 echo "==> Removing service infrastructure"
 
 SERVICES=(
+  "Client"
   "LedgerGateway"
   "FinancialService"
   "EventRelayWorker"

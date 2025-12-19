@@ -44,12 +44,14 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
+          env:
+            - name: Logging__LogLevel__Microsoft.AspNetCore
+              value: Information
           envFrom:
             - configMapRef:
                 name: financial-service
           readinessProbe:
-            httpGet:
-              path: /health
+            tcpSocket:
               port: 8080
             initialDelaySeconds: 10
             periodSeconds: 5
@@ -111,8 +113,6 @@ metadata:
   name: financial-service
 data:
   Kafka__FinancialAccountCreatedConsumer__BootstrapServers: "broker:9092"
-  ASPNETCORE_Kestrel__Certificates__Default__Path: "/app/certs/grpc-dev.pfx"
-  ASPNETCORE_Kestrel__Certificates__Default__Password: "1234"
   OpenTelemetry__ExporterUrl: "http://signoz-otel-collector:4317"
   ASPNETCORE_ENVIRONMENT: "Development"
   ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=financialservice;Username=postgres;Password=postgres"
