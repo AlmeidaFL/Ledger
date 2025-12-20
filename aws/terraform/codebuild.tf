@@ -1,3 +1,7 @@
+data "aws_caller_identity" "current" {}
+
+data "aws_region" "current" {}
+
 resource "aws_s3_bucket" "ledger-codebuild" {
   bucket = "ledger-codebuild"
 }
@@ -48,6 +52,16 @@ resource "aws_codebuild_project" "ledger-codebuild" {
     type                        = "LINUX_CONTAINER"
     image_pull_credentials_type = "CODEBUILD"
     privileged_mode = true
+
+    environment_variable {
+        name  = "AWS_ACCOUNT_ID"
+        value = data.aws_caller_identity.current.account_id
+    }
+
+    environment_variable {
+        name  = "AWS_REGION"
+        value = data.aws_region.current.name
+    }
   }
 
 
