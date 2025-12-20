@@ -5,6 +5,9 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
+RUN dotnet tool install --global NSwag.ConsoleCore --version 14.6.3
+ENV PATH="$PATH:/root/.dotnet/tools"
+
 COPY open-api/ ./open-api/
 COPY ServiceCommons/ServiceCommons/ServiceCommons.csproj ServiceCommons/ServiceCommons/
 COPY ServiceCommons/ServiceCommons.OpenTelemetry/ServiceCommons.OpenTelemetry.csproj ServiceCommons/ServiceCommons.OpenTelemetry/
