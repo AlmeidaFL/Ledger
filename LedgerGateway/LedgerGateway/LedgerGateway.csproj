@@ -43,10 +43,12 @@
       <ProjectReference Include="..\..\ServiceCommons\ServiceCommons\ServiceCommons.csproj" />
     </ItemGroup>
 
-    <Target Name="GenerateUserApiClient" BeforeTargets="Build">
+    <Target Name="GenerateUserApiClient" BeforeTargets="PrepareForBuild">
+        <Message Importance="high" Text="--- NSwag: Gerando Client ---" />
         <Exec Command="nswag run nswag/user-api.nswag" />
     </Target>
-    <Target Name="GenerateSimpleAuhtClient" BeforeTargets="Build">
+    <Target Name="GenerateSimpleAuhtClient" BeforeTargets="PrepareForBuild">
+        <Message Importance="high" Text="--- NSwag: Gerando Client ---" />
         <Exec Command="nswag run nswag/simple-auth.nswag" />
     </Target>
 </Project>
