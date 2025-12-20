@@ -9,6 +9,10 @@ phases:
 
       - CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
 
+      - dotnet tool install --global NSwag.ConsoleCore
+      - export PATH="$PATH:/root/.dotnet/tools"
+      - nswag version
+
   build:
     commands:
       - |
