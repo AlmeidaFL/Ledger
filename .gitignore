@@ -9,3 +9,8 @@ riderModule.iml
 *.user
 /signoz/
 node_modules/
+
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
