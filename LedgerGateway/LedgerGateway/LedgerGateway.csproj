@@ -44,15 +44,12 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Include="RestClients/*.cs" />
+        <Compile Update="RestClients/*.cs" />
     </ItemGroup>
-    
-    <Target Name="GenerateUserApiClient" BeforeTargets="PrepareForBuild">
-        <Message Importance="high" Text="--- NSwag: Gerando Client ---" />
-        <Exec Command="nswag run nswag/user-api.nswag" />
-    </Target>
-    <Target Name="GenerateSimpleAuhtClient" BeforeTargets="PrepareForBuild">
-        <Message Importance="high" Text="--- NSwag: Gerando Client ---" />
-        <Exec Command="nswag run nswag/simple-auth.nswag" />
+
+    <Target Name="GenerateNSwagClients" BeforeTargets="PrepareForBuild">
+        <Message Importance="high" Text="--- NSwag: Gerando Clients ---" />
+        <Exec Command="dotnet nswag run nswag/user-api.nswag" />
+        <Exec Command="dotnet nswag run nswag/simple-auth.nswag" />
     </Target>
 </Project>
