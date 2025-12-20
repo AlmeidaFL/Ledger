@@ -43,6 +43,10 @@
       <ProjectReference Include="..\..\ServiceCommons\ServiceCommons\ServiceCommons.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <Compile Include="RestClients/*.cs" />
+    </ItemGroup>
+    
     <Target Name="GenerateUserApiClient" BeforeTargets="PrepareForBuild">
         <Message Importance="high" Text="--- NSwag: Gerando Client ---" />
         <Exec Command="nswag run nswag/user-api.nswag" />
