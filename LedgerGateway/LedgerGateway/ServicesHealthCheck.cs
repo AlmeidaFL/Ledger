@@ -8,7 +8,6 @@ public class ServicesHealthCheck(IConfiguration configuration) : IHealthCheck
         HealthCheckContext context,
         CancellationToken cancellationToken = new CancellationToken())
     {
-        # test
         var httpClient = new HttpClient();
         
         var userApi = GetUrlOrThrow("UserApi");
