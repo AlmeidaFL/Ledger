@@ -49,7 +49,10 @@
 
     <Target Name="GenerateNSwagClients" BeforeTargets="PrepareForBuild">
         <Message Importance="high" Text="--- NSwag: Gerando Clients ---" />
-        <Exec Command="$(NSwagExe_Net90) run nswag/user-api.nswag" />
-        <Exec Command="$(NSwagExe_Net90) run nswag/simple-auth.nswag" />
+        <Exec Command="$(NSwagExe_Net90) run user-api.nswag" WorkingDirectory="$(ProjectDir)nswag" />
+        <Exec Command="$(NSwagExe_Net90) run simple-auth.nswag" WorkingDirectory="$(ProjectDir)nswag"/>
+
+        <Message Importance="high" Text="--- Verificando se os arquivos foram para a pasta certa ---" />
+        <Exec Command="ls -l $(ProjectDir)RestClients/" Condition=" '$(OS)' == 'Unix' " />
     </Target>
 </Project>

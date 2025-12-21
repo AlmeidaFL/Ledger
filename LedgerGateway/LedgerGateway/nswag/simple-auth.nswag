@@ -3,8 +3,8 @@
   "defaultVariables": null,
   "documentGenerator": {
     "fromDocument": {
-      "json": "../../open-api/SimpleAuth.json",  
-      "output": "../nswag/simple-auth.yaml"
+      "json": "../open-api/SimpleAuth.json",  
+      "output": "simple-auth.yaml"
     }
   },
   "codeGenerators": {

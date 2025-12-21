@@ -3,8 +3,8 @@
   "defaultVariables": null,
   "documentGenerator": {
     "fromDocument": {
-      "json": "../../open-api/UserApi.json",  
-      "output": "../nswag/user-api.yaml"
+      "json": "../open-api/UserApi.json",  
+      "output": "user-api.yaml"
     }
   },
   "codeGenerators": {

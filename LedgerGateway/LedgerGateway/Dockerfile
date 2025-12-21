@@ -8,7 +8,6 @@ WORKDIR /src
 RUN dotnet tool install --global NSwag.ConsoleCore --version 14.6.3
 ENV PATH="$PATH:/root/.dotnet/tools"
 
-COPY open-api/ ./open-api/
 COPY ServiceCommons/ServiceCommons/ServiceCommons.csproj ServiceCommons/ServiceCommons/
 COPY ServiceCommons/ServiceCommons.OpenTelemetry/ServiceCommons.OpenTelemetry.csproj ServiceCommons/ServiceCommons.OpenTelemetry/
 COPY ServiceCommons/ServiceCommons.ApiKey/ServiceCommons.ApiKey.csproj ServiceCommons/ServiceCommons.ApiKey/
