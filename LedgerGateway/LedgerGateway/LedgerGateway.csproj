@@ -43,15 +43,15 @@
       <ProjectReference Include="..\..\ServiceCommons\ServiceCommons\ServiceCommons.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-        <Compile Update="RestClients/*.cs" />
-    </ItemGroup>
-
     <Target Name="GenerateNSwagClients" BeforeTargets="PrepareForBuild">
         <Message Importance="high" Text="--- NSwag: Gerando Clients ---" />
         <Exec Command="$(NSwagExe_Net90) run user-api.nswag" WorkingDirectory="$(ProjectDir)nswag" />
         <Exec Command="$(NSwagExe_Net90) run simple-auth.nswag" WorkingDirectory="$(ProjectDir)nswag"/>
 
+        <ItemGroup>
+            <Compile Include="RestClients/*.cs" />
+        </ItemGroup>
+        
         <Message Importance="high" Text="--- Verificando se os arquivos foram para a pasta certa ---" />
         <Exec Command="ls -l $(ProjectDir)RestClients/" Condition=" '$(OS)' == 'Unix' " />
     </Target>
