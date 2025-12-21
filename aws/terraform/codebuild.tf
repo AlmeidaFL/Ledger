@@ -57,11 +57,6 @@ resource "aws_codebuild_project" "ledger-codebuild" {
         name  = "AWS_ACCOUNT_ID"
         value = data.aws_caller_identity.current.account_id
     }
-
-    environment_variable {
-        name  = "AWS_REGION"
-        value = data.aws_region.current.name
-    }
   }
 
 
