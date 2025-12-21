@@ -38,8 +38,12 @@ resource "aws_iam_role_policy" "codebuild_policy" {
   policy = data.aws_iam_policy_document.codebuild_permissions.json
 }
 
+locals {
+  ledger-codebuild-name = "ledger-codebuild"
+}
+
 resource "aws_codebuild_project" "ledger-codebuild" {
-  name         = "ledger-codebuild"
+  name         = local.ledger-codebuild-name
   service_role = aws_iam_role.codebuild-role.arn
 
   artifacts {
