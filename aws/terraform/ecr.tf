@@ -1,7 +1,3 @@
-provider "aws" {
-    region = "sa-east-1"
-}
-
 resource "aws_ecr_repository" "ledger-gateway" {
   name = "ledger-gateway"
   image_tag_mutability = "MUTABLE"
