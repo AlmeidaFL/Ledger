@@ -20,7 +20,7 @@ resource "kubernetes_manifest" "bootstrap_ledger" {
       source = {
         repoURL        = "https://github.com/AlmeidaFL/Ledger.git"
         targetRevision = "main"
-        path           = "k8s"
+        path           = "k8s/argocd"
       }
       destination = {
         server    = "https://kubernetes.default.svc"
