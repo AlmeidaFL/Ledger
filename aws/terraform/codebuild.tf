@@ -27,8 +27,8 @@ resource "aws_iam_role" "codebuild-role" {
 
 data "aws_iam_policy_document" "codebuild_permissions" {
   statement {
-    effect = "Allow"
-    actions = ["*"]
+    effect    = "Allow"
+    actions   = ["*"]
     resources = ["*"]
   }
 }
@@ -55,11 +55,11 @@ resource "aws_codebuild_project" "ledger-codebuild" {
     image                       = "aws/codebuild/amazonlinux2-x86_64-standard:5.0"
     type                        = "LINUX_CONTAINER"
     image_pull_credentials_type = "CODEBUILD"
-    privileged_mode = true
+    privileged_mode             = true
 
     environment_variable {
-        name  = "AWS_ACCOUNT_ID"
-        value = data.aws_caller_identity.current.account_id
+      name  = "AWS_ACCOUNT_ID"
+      value = data.aws_caller_identity.current.account_id
     }
   }
 
@@ -78,8 +78,8 @@ resource "aws_codebuild_project" "ledger-codebuild" {
 
 
   source {
-    type     = "GITHUB"
-    location = "https://github.com/AlmeidaFL/Ledger"
+    type      = "GITHUB"
+    location  = "https://github.com/AlmeidaFL/Ledger"
     buildspec = "aws/terraform/resources/buildspec.yml"
   }
 }
