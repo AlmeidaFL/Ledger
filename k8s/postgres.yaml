@@ -65,7 +65,7 @@ spec:
     - metadata:
         name: postgres-data
       spec:
-        storageClassName: ebs-csi-default-sc
+        storageClassName: gp2
         accessModes:
           - ReadWriteOnce
         resources:
