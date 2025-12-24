@@ -80,7 +80,7 @@ module "eks" {
       desired_size   = 2
       instance_types = ["t3.medium"]
       ami_type       = "AL2023_x86_64_STANDARD"
-      capacity_type  = "ON_DEMAND"
+      capacity_type  = "SPOT"
       disk_size      = 20
       labels = {
         Environment = "test"
