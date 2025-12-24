@@ -64,7 +64,7 @@ module "eks" {
     }
     aws-ebs-csi-driver = {
       most_recent    = true
-      before_compute = true
+      before_compute = false
     }
   }
 
@@ -74,11 +74,12 @@ module "eks" {
       iam_role_name   = "ledger-node-role"
       iam_role_additional_policies = {
         CloudWatchLogs = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+        EcrPull = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
       }
-      min_size       = 1
+      min_size       = 2
       max_size       = 3
       desired_size   = 2
-      instance_types = ["t3.medium"]
+      instance_types = ["m5.xlarge"]
       ami_type       = "AL2023_x86_64_STANDARD"
       capacity_type  = "SPOT"
       disk_size      = 20

@@ -5,12 +5,15 @@ resource "aws_iam_role" "ebs_csi_role" {
     Version = "2012-10-17"
     Statement = [
       {
-        Action = "sts:AssumeRole"
         Effect = "Allow"
         Principal = {
           Service = "pods.eks.amazonaws.com"
         }
-      },
+        Action = [
+          "sts:AssumeRole",
+          "sts:TagSession"
+        ]
+      }
     ]
   })
 }
