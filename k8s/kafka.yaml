@@ -54,6 +54,7 @@ spec:
     - metadata:
         name: data
       spec:
+        storageClassName: ebs-csi-default-sc
         accessModes:
           - ReadWriteOnce
         resources:

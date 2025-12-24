@@ -65,6 +65,7 @@ spec:
     - metadata:
         name: postgres-data
       spec:
+        storageClassName: ebs-csi-default-sc
         accessModes:
           - ReadWriteOnce
         resources:
