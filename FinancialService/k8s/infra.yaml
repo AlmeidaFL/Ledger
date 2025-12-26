@@ -41,7 +41,7 @@ spec:
       containers:
         - name: financial-service
           image: financial-service
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
           env:
@@ -82,6 +82,7 @@ spec:
       containers:
         - name: financial-service-migrations
           image: financial-service
+          imagePullPolicy: IfNotPresent
           command: ["dotnet", "FinancialService.MigrationsRunner.dll"]
           env:
             - name: ConnectionStrings__DefaultConnection

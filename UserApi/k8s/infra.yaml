@@ -41,7 +41,7 @@ spec:
       containers:
         - name: user-api
           image: user-api
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
           env:
@@ -83,6 +83,7 @@ spec:
       containers:
         - name: user-api-migrations
           image: user-api
+          imagePullPolicy: IfNotPresent
           command: ["dotnet", "UserApi.MigrationsRunner.dll"]
           env:
             - name: ConnectionStrings__DefaultConnection

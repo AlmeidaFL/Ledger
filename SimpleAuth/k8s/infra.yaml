@@ -41,7 +41,7 @@ spec:
       containers:
         - name: simple-auth
           image: simple-auth
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
           env:
@@ -82,6 +82,7 @@ spec:
               echo "Postgres is ready"
       containers:
         - name: simple-auth-migrations
+          imagePullPolicy: IfNotPresent
           image: simple-auth
           command: ["dotnet", "SimpleAuth.MigrationsRunner.dll"]
           env:
