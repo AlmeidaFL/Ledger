@@ -16,6 +16,7 @@ spec:
     spec:
       containers:
         - name: ledger-gateway
+          # image: ledger-gateway
           image: ledger-gateway
           imagePullPolicy: IfNotPresent
           ports:
