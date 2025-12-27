@@ -15,5 +15,5 @@ node_modules/
 *.tfstate.*
 *.tfvars
 
-kyverno.yaml
+kyverno.tf
 .terraform.lock.hcl
