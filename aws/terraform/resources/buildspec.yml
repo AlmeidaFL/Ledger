@@ -21,28 +21,37 @@ phases:
       - COMMIT_SHA=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c1-7)
       - CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
       - REPO_URL=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+      - PRIVATE_REPO_ALIAS=private-repo
       - GITHUB_REPO=https://$GITHUB_TOKEN@github.com/AlmeidaFL/Ledger.git
-      - HAS_GATEWAY_CHANGED=false
       - echo "Finishing pre build"
 
   build:
     commands:
       - |
-        if echo "$CHANGED_FILES" | grep -q "^LedgerGateway/"; then
-          echo "Changes detected in LedgerGateway. Building image..."
+        chmod +x ./aws/resources/build-and-push.sh
 
-          docker build \
-            -t $REPO_URL/ledger-gateway:latest \
-            -t $REPO_URL/ledger-gateway:$COMMIT_SHA \
-            -f LedgerGateway/LedgerGateway/Dockerfile .
+        try_to_build() {
+          local service_name=$1
+          local image_name=$2
+          local initial_path_override=$3
 
-          docker push $REPO_URL/ledger-gateway:$COMMIT_SHA
-          docker push $REPO_URL/ledger-gateway:latest
+          if echo "$CHANGED_FILES" | grep -q "^$service_name/"; then
+            echo "Changes detected in $service_name. Building image..."
 
-          HAS_GATEWAY_CHANGED=true
-        else
-          echo "No changes in Ledger/Gateway. Skipping build."
-        fi
+            ./aws/resources/build-and-push.sh "$REPO_URL" "$image_name" "$service_name" "$COMMIT_SHA" "$initial_path_override"
+
+            touch ".built_$service_name"
+            echo "Marker file created: .built_$service_name"
+          else
+            echo "No changes in $service_name. Skipping build."
+          fi
+        }
+
+        try_to_build "LedgerGateway" "ledger-gateway"
+        try_to_build "FinancialService" "financial-service"
+        try_to_build "SimpleAuth.Api" "simple-auth" "SimpleAuth"
+        try_to_build "UserApi" "user-api"
+        try_to_build "EventRelayWorker" "event-relay-worker"
 
   post_build:
     commands:
@@ -52,13 +61,27 @@ phases:
           git config --global user.name "CodeBuild Deploy"
 
           echo "Checking image builds to update"
-          if [[ "$HAS_GATEWAY_CHANGED" = "true" ]] ; then
-            echo "Updating Ledger Gateway k8s image"
-            yq -i ".spec.template.spec.containers[0].image = \"$REPO_URL/ledger-gateway:$COMMIT_SHA\"" ./LedgerGateway/k8s/infra.yaml
-          fi
+
+          update_k8s_image_version() {
+            local service_name=$1
+            local image_name=$2
+
+            if [[ -f ".built_$service_name" ]]; then
+              echo "Updating $service_name k8s image"
+              yq -i ".spec.template.spec.containers[0].image = \"$PRIVATE_REPO_ALIAS/$image_name:$COMMIT_SHA\"" ./$service_name/k8s/infra.yaml
+            else
+              echo "No changes detected for $service_name"
+            fi
+          }
+
+          update_k8s_image_version "LedgerGateway" "ledger-gateway"
+          update_k8s_image_version "FinancialService" "financial-service"
+          update_k8s_image_version "SimpleAuth" "simple-auth"
+          update_k8s_image_version "UserApi" "user-api"
+          update_k8s_image_version "EventRelayWorker" "event-relay-worker"
 
           echo "Pushing changes"
-          git add * || echo "No changes to add"
+          git add . || echo "No changes to add"
           git commit -m '[CODEBUILD] update images versions [skip ci]' || echo "No changes to commit"
           git push $GITHUB_REPO HEAD:main || echo "No changes to push"
 
