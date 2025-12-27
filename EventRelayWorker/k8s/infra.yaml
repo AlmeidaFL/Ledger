@@ -6,16 +6,17 @@ data:
   TENANTS__TENANTCONFIGS__1__NAME: FinancialService
   TENANTS__TENANTCONFIGS__1__CONNECTIONSTRING: Host=postgres;Port=5432;Database=financialservice;Username=postgres;Password=postgres
   TENANTS__TENANTCONFIGS__1__OUTBOXTABLE: OutboxMessages
-
   TENANTS__TENANTCONFIGS__2__NAME: SimpleAuth
   TENANTS__TENANTCONFIGS__2__CONNECTIONSTRING: Host=postgres;Port=5432;Database=simpleauth;Username=postgres;Password=postgres
   TENANTS__TENANTCONFIGS__2__OUTBOXTABLE: OutboxMessages
-
   Kestrel__Endpoints__Http__Url: http://0.0.0.0:5005
   Kafka__BootstrapServers: broker:9092
-
+spec:
+  template:
+    spec:
+      containers:
+        - image: private-repo/event-relay-worker:b0b08b6
 ---
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -44,7 +45,7 @@ spec:
               echo "Kafka ready"
       containers:
         - name: event-relay-worker
-          image: event-relay-worker
+          image: private-repo/event-relay-worker:b0b08b6
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5005
