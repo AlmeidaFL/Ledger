@@ -51,7 +51,7 @@ phases:
           fi
 
           if echo "$CHANGED_FILES" | grep -q "^$service_path/"; then
-            echo "Changes detected in $service_name. Building image..."
+            echo "Changes detected in $service_path. Building image..."
 
             ./aws/terraform/resources/build-and-push.sh "$REPO_URL" "$image_name" "$service_name" "$COMMIT_SHA" "$initial_path_override" "$has_same_path_with_solution"
 
