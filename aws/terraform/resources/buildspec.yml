@@ -42,11 +42,18 @@ phases:
           local service_name=$1
           local image_name=$2
           local initial_path_override=$3
+          local service_path=$1
+          local has_same_path_with_solution=$4
 
-          if echo "$CHANGED_FILES" | grep -q "^$service_name/"; then
+          if [[ "$initial_path_override" ]]; then
+            echo "Using overridden path: $initial_path_override"
+            service_path=$3
+          fi
+
+          if echo "$CHANGED_FILES" | grep -q "^$service_path/"; then
             echo "Changes detected in $service_name. Building image..."
 
-            ./aws/terraform/resources/build-and-push.sh "$REPO_URL" "$image_name" "$service_name" "$COMMIT_SHA" "$initial_path_override"
+            ./aws/terraform/resources/build-and-push.sh "$REPO_URL" "$image_name" "$service_name" "$COMMIT_SHA" "$initial_path_override" "$has_same_path_with_solution"
 
             touch ".built_$service_name"
             echo "Marker file created: .built_$service_name"
@@ -59,7 +66,7 @@ phases:
         try_to_build "FinancialService" "financial-service"
         try_to_build "SimpleAuth.Api" "simple-auth" "SimpleAuth"
         try_to_build "UserApi" "user-api"
-        try_to_build "EventRelayWorker" "event-relay-worker"
+        try_to_build "EventRelayWorker" "event-relay-worker" "" true
 
   post_build:
     commands:
