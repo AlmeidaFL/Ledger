@@ -15,7 +15,7 @@ spec:
   template:
     spec:
       containers:
-        - image: private-repo/event-relay-worker:b0b08b6
+        - image: private-repo/event-relay-worker:d40bbc4
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -45,7 +45,7 @@ spec:
               echo "Kafka ready"
       containers:
         - name: event-relay-worker
-          image: private-repo/event-relay-worker:b0b08b6
+          image: private-repo/event-relay-worker:d40bbc4
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5005
