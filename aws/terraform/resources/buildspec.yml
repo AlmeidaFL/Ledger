@@ -80,6 +80,13 @@ phases:
           update_k8s_image_version "UserApi" "user-api"
           update_k8s_image_version "EventRelayWorker" "event-relay-worker"
 
+          echo "Removing created mark files"
+          rm ".built_LedgerGateway" 
+          rm ".built_FinancialService"
+          rm ".built_SimpleAuth"
+          rm ".built_UserApi"
+          rm ".built_EventRelayWorker"
+
           echo "Pushing changes"
           git add . || echo "No changes to add"
           git commit -m '[CODEBUILD] update images versions [skip ci]' || echo "No changes to commit"
