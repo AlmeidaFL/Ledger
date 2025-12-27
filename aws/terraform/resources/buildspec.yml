@@ -96,11 +96,7 @@ phases:
           update_k8s_image_version "EventRelayWorker" "event-relay-worker"
 
           echo "Removing created mark files"
-          rm ".built_LedgerGateway" 
-          rm ".built_FinancialService"
-          rm ".built_SimpleAuth"
-          rm ".built_UserApi"
-          rm ".built_EventRelayWorker"
+          rm .built_LedgerGateway .built_FinancialService .built_SimpleAuth .built_UserApi .built_EventRelayWorker
 
           echo "Pushing changes"
           git add . || echo "No changes to add"
