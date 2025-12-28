@@ -44,6 +44,7 @@ phases:
           local initial_path_override=$3
           local service_path=$1
           local has_same_path_with_solution=$4
+          local override_context=$5
 
           if [[ "$initial_path_override" ]]; then
             echo "Using overridden path: $initial_path_override"
@@ -53,7 +54,7 @@ phases:
           if echo "$CHANGED_FILES" | grep -q "^$service_path/"; then
             echo "Changes detected in $service_path. Building image..."
 
-            ./aws/terraform/resources/build-and-push.sh "$REPO_URL" "$image_name" "$service_name" "$COMMIT_SHA" "$initial_path_override" "$has_same_path_with_solution"
+            ./aws/terraform/resources/build-and-push.sh "$REPO_URL" "$image_name" "$service_name" "$COMMIT_SHA" "$initial_path_override" "$has_same_path_with_solution" "$override_context"
 
             touch ".built_$service_path"
             echo "Marker file created: .built_$service_path"
@@ -63,7 +64,7 @@ phases:
         }
 
         try_to_build "LedgerGateway" "ledger-gateway"
-        try_to_build "ledger-front" "front-end" "Client"
+        try_to_build "ledger-front" "front-end" "Client" "" "Client/ledger-front"
         try_to_build "FinancialService" "financial-service"
         try_to_build "SimpleAuth.Api" "simple-auth" "SimpleAuth"
         try_to_build "UserApi" "user-api"
