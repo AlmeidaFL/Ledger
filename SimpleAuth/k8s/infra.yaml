@@ -40,7 +40,7 @@ spec:
                 --timeout=30s
       containers:
         - name: simple-auth
-          image: simple-auth
+          image: private-repo:simple-auth:d40bbc4
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
