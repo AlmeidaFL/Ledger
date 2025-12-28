@@ -53,7 +53,3 @@ spec:
       port: 5000
       targetPort: 8080
       protocol: TCP
-  template:
-    spec:
-      containers:
-        - image: private-repo/ledger-gateway:b0b08b6

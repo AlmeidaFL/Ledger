@@ -83,7 +83,7 @@ spec:
       containers:
         - name: simple-auth-migrations
           imagePullPolicy: IfNotPresent
-          image: simple-auth
+          image: private-repo/simple-auth:d40bbc4
           command: ["dotnet", "SimpleAuth.MigrationsRunner.dll"]
           env:
             - name: ConnectionStrings__DefaultConnection

@@ -55,10 +55,10 @@ phases:
 
             ./aws/terraform/resources/build-and-push.sh "$REPO_URL" "$image_name" "$service_name" "$COMMIT_SHA" "$initial_path_override" "$has_same_path_with_solution"
 
-            touch ".built_$service_name"
-            echo "Marker file created: .built_$service_name"
+            touch ".built_$service_path"
+            echo "Marker file created: .built_$service_path"
           else
-            echo "No changes in $service_name. Skipping build."
+            echo "No changes in $service_path. Skipping build."
           fi
         }
 
@@ -83,7 +83,7 @@ phases:
 
             if [[ -f ".built_$service_name" ]]; then
               echo "Updating $service_name k8s image"
-              yq -i ".spec.template.spec.containers[0].image = \"$PRIVATE_REPO_ALIAS/$image_name:$COMMIT_SHA\"" ./$service_name/k8s/infra.yaml
+              yq -i "(select(.kind == \"Deployment\" or .kind == \"Job\")).spec.template.spec.containers[0].image = \"$PRIVATE_REPO_ALIAS/$image_name:$COMMIT_SHA\"" ./$service_name/k8s/infra.yaml
             else
               echo "No changes detected for $service_name"
             fi
