@@ -63,6 +63,7 @@ phases:
         }
 
         try_to_build "LedgerGateway" "ledger-gateway"
+        try_to_build "ledger-front" "front-end" "Client"
         try_to_build "FinancialService" "financial-service"
         try_to_build "SimpleAuth.Api" "simple-auth" "SimpleAuth"
         try_to_build "UserApi" "user-api"
@@ -91,12 +92,13 @@ phases:
 
           update_k8s_image_version "LedgerGateway" "ledger-gateway"
           update_k8s_image_version "FinancialService" "financial-service"
+          update_k8s_image_version "Client" "front-end"
           update_k8s_image_version "SimpleAuth" "simple-auth"
           update_k8s_image_version "UserApi" "user-api"
           update_k8s_image_version "EventRelayWorker" "event-relay-worker"
 
           echo "Removing created mark files"
-          rm .built_LedgerGateway .built_FinancialService .built_SimpleAuth .built_UserApi .built_EventRelayWorker
+          rm .built_LedgerGateway .built_FinancialService .built_SimpleAuth .built_UserApi .built_EventRelayWorker .built.Client
 
           echo "Pushing changes"
           git add . || echo "No changes to add"
