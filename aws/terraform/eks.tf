@@ -74,7 +74,7 @@ module "eks" {
       iam_role_name   = "ledger-node-role"
       iam_role_additional_policies = {
         CloudWatchLogs = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
-        EcrPull = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+        EcrPull        = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
       }
       min_size       = 2
       max_size       = 3
