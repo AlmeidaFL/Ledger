@@ -18,8 +18,17 @@ resource "aws_iam_role" "lb_controller_role" {
   })
 }
 
+data "http" "lb_controller_policy_json" {
+  url = "https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/main/docs/install/iam_policy.json"
+}
+
+resource "aws_iam_policy" "lb_controller" {
+  name        = "AWSLoadBalancerControllerIAMPolicy"
+  policy      = data.http.lb_controller_policy_json.response_body
+}
+
 resource "aws_iam_role_policy_attachment" "lb_controller_policy" {
-  policy_arn = "arn:aws:iam::aws:policy/AWSLoadBalancerControllerIAMPolicy"
+  policy_arn = aws_iam_policy.lb_controller.arn
   role       = aws_iam_role.lb_controller_role.name
 }
 
@@ -49,6 +58,10 @@ resource "helm_release" "aws_lb_controller" {
     {
       name  = "serviceAccount.name"
       value = "aws-load-balancer-controller"
+    },
+    {
+        name = "vpcId",
+        value = module.vpc.vpc_id
     }
   ]
 }
