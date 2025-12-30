@@ -159,4 +159,3 @@ All resources are deployed in **sa-east-1** (São Paulo, Brazil).
 
 For issues or questions, see:
 - [environments/dev/README.md](environments/dev/README.md) - Detailed deployment guide
-- [old_architecture/README.md](old_architecture/README.md) - Migration notes
