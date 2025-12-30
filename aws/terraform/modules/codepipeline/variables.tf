@@ -49,7 +49,7 @@ variable "github_branch" {
 variable "detect_changes" {
   description = "Automatically detect changes"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "trigger_branches" {
