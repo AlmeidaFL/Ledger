@@ -65,5 +65,6 @@ resource "aws_codebuild_project" "ledger_codebuild" {
     type      = var.source_type
     location  = var.source_location
     buildspec = var.buildspec_path
+    git_clone_depth = 2
   }
 }
