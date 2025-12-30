@@ -16,3 +16,5 @@ node_modules/
 
 kyverno.tf
 .terraform.lock.hcl
+
+.claude
