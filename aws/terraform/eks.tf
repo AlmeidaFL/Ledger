@@ -70,6 +70,11 @@ module "eks" {
 
   eks_managed_node_groups = {
     projeto-ledger = {
+      metadata_options = {
+        http_endpoint               = "enabled"
+        http_tokens                 = "required"
+        http_put_response_hop_limit = 2
+      }
       create_iam_role = true
       iam_role_name   = "ledger-node-role"
       iam_role_additional_policies = {
