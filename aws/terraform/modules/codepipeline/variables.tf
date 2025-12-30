@@ -91,4 +91,5 @@ variable "build_action_name" {
 variable "codebuild_project_name" {
   description = "Name of the CodeBuild project to use"
   type        = string
+  default     = "ledger-codebuild"
 }
