@@ -41,34 +41,27 @@ phases:
         try_to_build() {
           local service_name=$1
           local image_name=$2
-          local initial_path_override=$3
-          local service_path=$1
-          local has_same_path_with_solution=$4
-          local override_context=$5
+          local dockerfile_path=$3
+          local override_context=$4
 
-          if [[ "$initial_path_override" ]]; then
-            echo "Using overridden path: $initial_path_override"
-            service_path=$3
-          fi
+          if echo "$CHANGED_FILES" | grep -q "^$service_name/"; then
+            echo "Changes detected in $service_name. Building image..."
 
-          if echo "$CHANGED_FILES" | grep -q "^$service_path/"; then
-            echo "Changes detected in $service_path. Building image..."
+            ./aws/terraform/resources/build-and-push.sh "$REPO_URL" "$image_name" "$dockerfile_path" "$COMMIT_SHA" "$override_context"
 
-            ./aws/terraform/resources/build-and-push.sh "$REPO_URL" "$image_name" "$service_name" "$COMMIT_SHA" "$initial_path_override" "$has_same_path_with_solution" "$override_context"
-
-            touch ".built_$service_path"
-            echo "Marker file created: .built_$service_path"
+            touch ".built_$service_name"
+            echo "Marker file created: .built_$service_name"
           else
-            echo "No changes in $service_path. Skipping build."
+            echo "No changes in $service_name. Skipping build."
           fi
         }
 
-        try_to_build "LedgerGateway" "ledger-gateway"
-        try_to_build "ledger-front" "front-end" "Client" "" "Client/ledger-front"
-        try_to_build "FinancialService" "financial-service"
-        try_to_build "SimpleAuth.Api" "simple-auth" "SimpleAuth"
-        try_to_build "UserApi" "user-api"
-        try_to_build "EventRelayWorker" "event-relay-worker" "" true
+        try_to_build "LedgerGateway" "ledger-gateway" "LedgerGateway/LedgerGateway" "."
+        try_to_build "Client" "ledger-front" "Client" "Client/ledger-front"
+        try_to_build "FinancialService" "financial-service" "FinancialService/FinancialService" "."
+        try_to_build "SimpleAuth" "simple-auth" "SimpleAuth/SimpleAuth.Api" "."
+        try_to_build "UserApi" "user-api" "UserApi/UserApi" "."
+        try_to_build "EventRelayWorker" "event-relay-worker" "EventRelayWorker/" "."
 
   post_build:
     commands:
@@ -99,7 +92,7 @@ phases:
           update_k8s_image_version "EventRelayWorker" "event-relay-worker"
 
           echo "Removing created mark files"
-          rm .built_LedgerGateway .built_FinancialService .built_SimpleAuth .built_UserApi .built_EventRelayWorker .built.Client
+          rm .built_LedgerGateway .built_FinancialService .built_SimpleAuth .built_UserApi .built_EventRelayWorker .built_Client
 
           echo "Pushing changes"
           git add . || echo "No changes to add"
