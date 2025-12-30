@@ -11,11 +11,6 @@ data:
   TENANTS__TENANTCONFIGS__2__OUTBOXTABLE: OutboxMessages
   Kestrel__Endpoints__Http__Url: http://0.0.0.0:5005
   Kafka__BootstrapServers: broker:9092
-spec:
-  template:
-    spec:
-      containers:
-        - image: private-repo/event-relay-worker:d40bbc4
 ---
 apiVersion: apps/v1
 kind: Deployment
