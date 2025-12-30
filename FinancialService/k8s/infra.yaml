@@ -40,7 +40,7 @@ spec:
                 --timeout=30s
       containers:
         - name: financial-service
-          image: private-repo/financial-service:b0b08b6
+          image: private-repo/financial-service:fa2b953
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
@@ -79,7 +79,7 @@ spec:
       restartPolicy: OnFailure
       containers:
         - name: financial-service-migrations
-          image: private-repo/financial-service:b0b08b6
+          image: private-repo/financial-service:fa2b953
           imagePullPolicy: IfNotPresent
           command: ["dotnet", "FinancialService.MigrationsRunner.dll"]
           env:
