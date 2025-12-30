@@ -69,3 +69,9 @@ variable "buildspec_path" {
   type        = string
   default     = "aws/terraform/resources/buildspec.yml"
 }
+
+variable "codestar_connection_arn" {
+  description = "ARN of the CodeStar connection for git clone operations"
+  type        = string
+  default     = ""
+}

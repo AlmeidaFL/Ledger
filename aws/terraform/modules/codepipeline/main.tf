@@ -82,7 +82,7 @@ resource "aws_codepipeline" "pipeline" {
         FullRepositoryId = var.github_repository
         BranchName       = var.github_branch
         DetectChanges    = var.detect_changes
-        OutputArtifactFormat = "CODE_BUILD_CLONE_ID"
+        OutputArtifactFormat = "CODEBUILD_CLONE_REF"
       }
     }
   }

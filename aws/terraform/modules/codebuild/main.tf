@@ -26,6 +26,19 @@ data "aws_iam_policy_document" "codebuild_permissions" {
     actions   = ["*"]
     resources = ["*"]
   }
+
+  # Explicit permission for CodeStar connection (required for CODEBUILD_CLONE_REF)
+  dynamic "statement" {
+    for_each = var.codestar_connection_arn != "" ? [1] : []
+    content {
+      effect = "Allow"
+      actions = [
+        "codestar-connections:UseConnection",
+        "codeconnections:UseConnection"
+      ]
+      resources = [var.codestar_connection_arn]
+    }
+  }
 }
 
 resource "aws_iam_role_policy" "codebuild_policy" {
