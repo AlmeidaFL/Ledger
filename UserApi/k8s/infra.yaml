@@ -40,7 +40,8 @@ spec:
                 --timeout=30s
       containers:
         - name: user-api
-          image: private-repo/user-api:fa2b953
+          # image: private-repo/user-api:fa2b953
+          image: user-api
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
@@ -80,7 +81,8 @@ spec:
               echo "Postgres is ready"
       containers:
         - name: user-api-migrations
-          image: private-repo/user-api:fa2b953
+          image: user-api
+          # image: private-repo/user-api:fa2b953
           imagePullPolicy: IfNotPresent
           command: ["dotnet", "UserApi.MigrationsRunner.dll"]
           env:

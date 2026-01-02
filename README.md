@@ -25,18 +25,20 @@ No modification of third-party licenses is intended.
 
 # How to run
 
-## Prerequisites
+## Run with Docker
 
-### Required
+### Prerequisites 
+
+#### Required
 - **Docker** version 20.10 or higher
 - **Docker Compose** version 2.0 or higher (included in Docker Desktop)
 
-### Optional
+#### Optional
 - **[Signoz](https://github.com/SigNoz/signoz/tree/main/deploy)** for observability and telemetry collection
 
-## Running the Application
+### Running the Application
 
-### Basic Setup (All Services)
+#### Basic Setup (All Services)
 
 1. From the project root directory, run:
 ```bash
@@ -54,7 +56,7 @@ This will start all core services:
 - Front-end application (port 5006)
 - Ledger Gateway (port 5000)
 
-## Optional: Observability Setup with Signoz
+### Optional: Observability Setup with Signoz
 
 To enable distributed tracing and metrics collection:
 
@@ -74,6 +76,71 @@ networks:
    - Add `signoz-ledger-net` to the **x-common** networks section
 
 3. Start Signoz according to its documentation
+
+4. Start the Ledger services (they are already configured to connect to `http://signoz-otel-collector:4317`)
+
+5. Access the Signoz UI at `http://localhost:8080` to view traces, metrics, and logs
+
+## Run with Kubernets (k8s) locally
+
+### Prerequisites 
+
+#### Required
+- **Docker Desktop** (includes Docker, Docker Compose and Kubernetes)
+- **Bash interpreter**
+- **Helm** version 4.0.4 >=
+
+#### Optional
+- **[Signoz with Helm](https://signoz.io/docs/install/kubernetes/local/)** for observability and telemetry collection. Follow instructions or see steps bellow
+
+#### Images
+
+1. Build images with either `docker build -f <Dockerfile>` on all services or build them with `docker compose up --build`
+2. Also, since this project allow you to also deploy to AWS, it may be necessary to adjust k8s/infra.yaml files on each service to pull images locally. 
+
+### Running the Application
+
+#### Basic Setup (All Services)
+
+1. From the project root directory, run:
+```bash
+./k8s/startup.sh
+```
+This script applies all Kubernetes manifests (databases, brokers, services and apps) in the correct order.
+
+This will start all core services:
+- PostgreSQL database
+- Simple Auth API
+- User API
+- Financial Service
+- Event Relay Worker
+- Apache Kafka broker
+- Kafka UI
+- Front-end application
+- Ledger Gateway
+
+
+#### Tear down basic setup
+
+1. From the project root directory, run:
+```bash
+./k8s/teardown.sh
+```
+
+### Optional: Observability Setup with Signoz
+
+To enable distributed tracing and metrics collection:
+
+1. Run the following instructions from your terminal
+```
+helm repo add signoz https://charts.signoz.io
+helm repo update
+helm pull signoz/signoz --untar
+cd signoz
+helm install signoz .
+```
+
+3. Run `kubectl port-forward -n <namespace> svc/signoz 8080:8080`. If not specified in signoz installation, the \<namespace\> will be **default**
 
 4. Start the Ledger services (they are already configured to connect to `http://signoz-otel-collector:4317`)
 

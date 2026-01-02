@@ -40,7 +40,8 @@ spec:
                 --timeout=30s
       containers:
         - name: simple-auth
-          image: private-repo/simple-auth:fa2b953
+          image: simple-auth
+          # image: private-repo/simple-auth:fa2b953
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
@@ -80,8 +81,9 @@ spec:
               echo "Postgres is ready"
       containers:
         - name: simple-auth-migrations
+          image: simple-auth
+          # image: private-repo/simple-auth:fa2b953
           imagePullPolicy: IfNotPresent
-          image: private-repo/simple-auth:fa2b953
           command: ["dotnet", "SimpleAuth.MigrationsRunner.dll"]
           env:
             - name: ConnectionStrings__DefaultConnection

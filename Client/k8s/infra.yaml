@@ -16,7 +16,8 @@ spec:
     spec:
       containers:
         - name: front-end
-          image: private-repo/front-end:0f8f8be
+          # image: private-repo/front-end:0f8f8be
+          image: front-end
           imagePullPolicy: Always
           ports:
             - containerPort: 80

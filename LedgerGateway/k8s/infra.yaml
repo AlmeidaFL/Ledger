@@ -16,8 +16,8 @@ spec:
     spec:
       containers:
         - name: ledger-gateway
-          # image: ledger-gateway
-          image: private-repo/ledger-gateway:b0b08b6
+          image: ledger-gateway
+          # image: private-repo/ledger-gateway:b0b08b6
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080

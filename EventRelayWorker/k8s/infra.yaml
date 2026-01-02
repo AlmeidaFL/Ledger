@@ -40,7 +40,8 @@ spec:
               echo "Kafka ready"
       containers:
         - name: event-relay-worker
-          image: private-repo/event-relay-worker:d40bbc4
+          image: event-relay-worker
+          # image: private-repo/event-relay-worker:d40bbc4
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5005

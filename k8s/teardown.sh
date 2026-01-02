@@ -7,7 +7,7 @@ echo "==> Tearing down Ledger cluster"
 
 echo "==> Removing service infrastructure"
 
-kubectl delete -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.12.0/deploy/static/provider/cloud/deploy.yaml
+kubectl delete -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.12.0/deploy/static/provider/cloud/deploy.yaml --ignore-not-found
 
 SERVICES=(
   "Client"
