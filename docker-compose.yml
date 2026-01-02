@@ -23,6 +23,15 @@ services:
   event-relay-worker:
     image: event-relay-worker
     container_name: event-relay-worker
+    environment:
+      TENANTS__TENANTCONFIGS__1__NAME: FinancialService
+      TENANTS__TENANTCONFIGS__1__CONNECTIONSTRING: Host=postgres;Port=5432;Database=financialservice;Username=postgres;Password=postgres
+      TENANTS__TENANTCONFIGS__1__OUTBOXTABLE: OutboxMessages
+      TENANTS__TENANTCONFIGS__2__NAME: SimpleAuth
+      TENANTS__TENANTCONFIGS__2__CONNECTIONSTRING: Host=postgres;Port=5432;Database=simpleauth;Username=postgres;Password=postgres
+      TENANTS__TENANTCONFIGS__2__OUTBOXTABLE: OutboxMessages
+      Kestrel__Endpoints__Http__Url: http://0.0.0.0:5005
+      Kafka__BootstrapServers=broker: 9092
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5005/health/ready"]
       interval: 10s
@@ -35,8 +44,6 @@ services:
     build:
       context: .
       dockerfile: EventRelayWorker/Dockerfile
-    env_file:
-      - ./env/event-relay-worker.env
     networks:
       - ledger-net
 
@@ -214,26 +221,6 @@ services:
       - "5006:80"
     networks:
       - ledger-net
-
-    # open-telemetry-collector:
-    #   image: otel/opentelemetry-collector-contrib:0.130.1
-    #   containar_name: open-telemetry-collector
-    #   restart: unless-stopped
-    #   ports:
-    #     - "4317:4317"
-    #     - "4318:4318"
-    #   volumes:
-    #     - ./open-telemetry/config.yaml:/etc/otelcol-contrib/config.yaml
-    #   networks:
-    #     - ledger-net
-
-    # signoz-otel-collector:
-    #   image: signoz/signoz-otel-collector:latest
-    #   containar_name: signoz
-    #   restart: unless-stopped
-    #   ports:
-    #   networks:
-    #     - ledger-net
 
 volumes:
   user-data:
