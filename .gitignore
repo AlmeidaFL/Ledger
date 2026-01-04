@@ -18,3 +18,5 @@ kyverno.tf
 .terraform.lock.hcl
 
 .claude
+
+diagram_explanation.txt

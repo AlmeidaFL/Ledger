@@ -18,7 +18,16 @@ No modification of third-party licenses is intended.
 
 ## Architecture
 
+### Application
+
 ![architecture](./documentation/high-overview-archictecure.svg)
+
+### AWS
+
+The majority of components are created with terraform. See aws/terraform for more information.
+
+![aws](./documentation/aws_diagram.svg)
+
 
 # Ledger Gateway – Architecture Overview
 
@@ -365,3 +374,30 @@ helm install signoz .
 4. Start the Ledger services (they are already configured to connect to `http://signoz-otel-collector:4317`)
 
 5. Access the Signoz UI at `http://localhost:8080` to view traces, metrics, and logs
+
+# Application images
+
+## Argo CD Management
+
+![argocd-home](./documentation/argocd-home.png)
+
+## Argo CD Ledger Applications
+
+![argocd-ledger](./documentation/argocd-ledger.png)
+
+## Ledger Login
+
+![login](./documentation/login.png)
+
+## Ledger Home
+
+![register](./documentation/home.png)
+
+## Ledger Deposit
+
+![deposit](./documentation/deposit.png)
+
+## SigNoz Observability
+
+![signoz](./documentation/signoz-local-k8s-trace.png)
+
